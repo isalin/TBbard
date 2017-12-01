@@ -3,6 +3,7 @@ package main;
 public class Main {
 
 	public static void main(String[] args) {
+		//debug();
 		new GUI();
 	}
 
@@ -14,9 +15,9 @@ public class Main {
 			e.printStackTrace();
 		}
 		Notes n = new Notes();
-		n.play("G(-1)");
-		n.play("G(+1)");
+		//n.play("G(-1)");
+		//n.play("G(+1)");
 		n.play("A");
-		n.play("C");
+		//n.play("C");
 	}
 }
