@@ -14,6 +14,9 @@ import java.io.File;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultFormatter;
 
 public class GUI {
 
@@ -24,34 +27,21 @@ public class GUI {
 		JFrame frame = new JFrame();
 
 		JPanel pnPanel0;
-		JTextArea taText;
 		JButton btPlayButton;
-		JSpinner spnDelaySpinner;
-		JLabel lbDelayLabel;
-		JSpinner spnCd;
+		JTextArea taText;
+
+		JPanel pnPanel1;
 		JLabel lbCd;
+		JSpinner spnCd;
+		JLabel lbFps;
+		JSpinner spnFpsSpinner;
+		JLabel lbDelayLabel;
+		JSpinner spnDelaySpinner;
 
 		pnPanel0 = new JPanel();
 		GridBagLayout gbPanel0 = new GridBagLayout();
 		GridBagConstraints gbcPanel0 = new GridBagConstraints();
 		pnPanel0.setLayout( gbPanel0 );
-
-		taText = new JTextArea(2,10);
-		gbcPanel0.gridx = 0;
-		gbcPanel0.gridy = 2;
-		gbcPanel0.gridwidth = 20;
-		gbcPanel0.gridheight = 16;
-		gbcPanel0.fill = GridBagConstraints.BOTH;
-		gbcPanel0.weightx = 1;
-		gbcPanel0.weighty = 1;
-		gbcPanel0.anchor = GridBagConstraints.NORTH;
-		JScrollPane sp = new JScrollPane(taText);  
-
-		gbPanel0.setConstraints( sp, gbcPanel0 );
-		pnPanel0.add( sp );
-
-
-
 
 		btPlayButton = new JButton( "Play"  );
 		gbcPanel0.gridx = 0;
@@ -65,68 +55,132 @@ public class GUI {
 		gbPanel0.setConstraints( btPlayButton, gbcPanel0 );
 		pnPanel0.add( btPlayButton );
 
-		spnDelaySpinner = new JSpinner( );
-		gbcPanel0.gridx = 13;
-		gbcPanel0.gridy = 0;
-		gbcPanel0.gridwidth = 7;
-		gbcPanel0.gridheight = 2;
+		taText = new JTextArea(2,10);
+		gbcPanel0.gridx = 0;
+		gbcPanel0.gridy = 6;
+		gbcPanel0.gridwidth = 20;
+		gbcPanel0.gridheight = 12;
 		gbcPanel0.fill = GridBagConstraints.BOTH;
 		gbcPanel0.weightx = 1;
-		gbcPanel0.weighty = 0;
+		gbcPanel0.weighty = 1;
 		gbcPanel0.anchor = GridBagConstraints.NORTH;
-		gbPanel0.setConstraints( spnDelaySpinner, gbcPanel0 );
-		pnPanel0.add( spnDelaySpinner );
-		spnDelaySpinner.setValue(5000);
+		gbPanel0.setConstraints( taText, gbcPanel0 );
+		pnPanel0.add( taText );
 
-		lbDelayLabel = new JLabel( "Start delay:"  );
-		gbcPanel0.gridx = 8;
-		gbcPanel0.gridy = 0;
-		gbcPanel0.gridwidth = 5;
-		gbcPanel0.gridheight = 2;
-		gbcPanel0.fill = GridBagConstraints.BOTH;
-		gbcPanel0.weightx = 1;
-		gbcPanel0.weighty = 0.1;
-		gbcPanel0.anchor = GridBagConstraints.NORTH;
-		gbPanel0.setConstraints( lbDelayLabel, gbcPanel0 );
-		pnPanel0.add( lbDelayLabel );
-
-		
-		SpinnerNumberModel m = new SpinnerNumberModel(1.0, 0, 100.0, 0.1);
-        spnCd = new JSpinner(m);
-		gbcPanel0.gridx = 4;
-		gbcPanel0.gridy = 0;
-		gbcPanel0.gridwidth = 4;
-		gbcPanel0.gridheight = 2;
-		gbcPanel0.fill = GridBagConstraints.BOTH;
-		gbcPanel0.weightx = 1;
-		gbcPanel0.weighty = 0;
-		gbcPanel0.anchor = GridBagConstraints.NORTH;
-		gbPanel0.setConstraints( spnCd, gbcPanel0 );
-		pnPanel0.add( spnCd );
-		
+		pnPanel1 = new JPanel();
+		pnPanel1.setBorder( BorderFactory.createTitledBorder( "Settings" ) );
+		GridBagLayout gbPanel1 = new GridBagLayout();
+		GridBagConstraints gbcPanel1 = new GridBagConstraints();
+		pnPanel1.setLayout( gbPanel1 );
 
 		lbCd = new JLabel( "WaitMultiplier:"  );
+		gbcPanel1.gridx = 0;
+		gbcPanel1.gridy = 0;
+		gbcPanel1.gridwidth = 4;
+		gbcPanel1.gridheight = 2;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 1;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( lbCd, gbcPanel1 );
+		pnPanel1.add( lbCd );
+
+		SpinnerNumberModel m = new SpinnerNumberModel(1.0, 0, 100.0, 0.1);
+		spnCd = new JSpinner(m);
+		
+		gbcPanel1.gridx = 4;
+		gbcPanel1.gridy = 0;
+		gbcPanel1.gridwidth = 4;
+		gbcPanel1.gridheight = 2;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 0;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( spnCd, gbcPanel1 );
+		pnPanel1.add( spnCd );
+		
+		
+
+		lbFps = new JLabel( "   Min FPS (Delay=0):"  );
+		gbcPanel1.gridx = 8;
+		gbcPanel1.gridy = 0;
+		gbcPanel1.gridwidth = 4;
+		gbcPanel1.gridheight = 2;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 1;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( lbFps, gbcPanel1 );
+		pnPanel1.add( lbFps );
+
+		spnFpsSpinner = new JSpinner( );
+		gbcPanel1.gridx = 12;
+		gbcPanel1.gridy = 0;
+		gbcPanel1.gridwidth = 3;
+		gbcPanel1.gridheight = 2;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 0;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( spnFpsSpinner, gbcPanel1 );
+		pnPanel1.add( spnFpsSpinner );
+
+		lbDelayLabel = new JLabel( "   Start delay:"  );
+		gbcPanel1.gridx = 15;
+		gbcPanel1.gridy = 0;
+		gbcPanel1.gridwidth = 2;
+		gbcPanel1.gridheight = 2;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 1;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( lbDelayLabel, gbcPanel1 );
+		pnPanel1.add( lbDelayLabel );
+
+		spnDelaySpinner = new JSpinner( );
+		gbcPanel1.gridx = 17;
+		gbcPanel1.gridy = 0;
+		gbcPanel1.gridwidth = 3;
+		gbcPanel1.gridheight = 2;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 0;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( spnDelaySpinner, gbcPanel1 );
+		pnPanel1.add( spnDelaySpinner );
 		gbcPanel0.gridx = 0;
 		gbcPanel0.gridy = 0;
-		gbcPanel0.gridwidth = 4;
-		gbcPanel0.gridheight = 2;
+		gbcPanel0.gridwidth = 20;
+		gbcPanel0.gridheight = 6;
 		gbcPanel0.fill = GridBagConstraints.BOTH;
 		gbcPanel0.weightx = 1;
-		gbcPanel0.weighty = 0.1;
+		gbcPanel0.weighty = 0;
 		gbcPanel0.anchor = GridBagConstraints.NORTH;
-		gbPanel0.setConstraints( lbCd, gbcPanel0 );
-		pnPanel0.add( lbCd );
+		gbPanel0.setConstraints( pnPanel1, gbcPanel0 );
+		pnPanel0.add( pnPanel1 );
 
 
+		spnDelaySpinner.setValue(5000);
 		JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnCd,"0.00"); 
 		spnCd.setEditor(editor);
 		editor = new JSpinner.NumberEditor(spnDelaySpinner, "#"); 
 		spnDelaySpinner.setEditor(editor);
 		spnCd.setValue(1.0);
+		
+	    JComponent comp = spnFpsSpinner.getEditor();
+	    JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
+	    DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
+	    formatter.setCommitsOnValidEdit(true);
+	    spnFpsSpinner.addChangeListener(new ChangeListener() {
 
-
-
-
+	        @Override
+	        public void stateChanged(ChangeEvent e) {
+	        	int fps = (int) spnFpsSpinner.getValue();
+	        	if(fps == 0) fps = 1;
+	        	lbFps.setText("  Min FPS (Delay=" + (int) Math.ceil((double) 1000/fps) + "):");
+	        }
+	    });
+	    spnFpsSpinner.setValue(59);
 
 		taText.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
@@ -154,7 +208,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Thread.sleep((int)spnDelaySpinner.getValue());
-					n = new Notes();
+					n = new Notes((int) spnFpsSpinner.getValue());
 					Notes.waitMultiplier = (double) spnCd.getValue();
 
 
@@ -177,7 +231,7 @@ public class GUI {
 		});
 
 		frame.add(pnPanel0);
-		frame.setSize(300, 300);
+		frame.setSize(600, 500);
 		frame.setTitle("TBbard");
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

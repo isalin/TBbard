@@ -14,7 +14,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Notes n = new Notes();
+		Notes n = new Notes(0);
 		//n.play("G(-1)");
 		//n.play("G(+1)");
 		n.play("A");

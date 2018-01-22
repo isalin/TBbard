@@ -34,6 +34,8 @@ public class Notes {
 	int newYPos =  0;
 	
 	boolean running = true;
+	
+	int fps = 0;
 
 	private String[] notes = {"C(-1)", "C", "C(+1)", 
 			"C#(-1)", "C#", "C#(+1)", 
@@ -51,7 +53,8 @@ public class Notes {
 	};
 
 
-	public Notes() {
+	public Notes(int fps) {
+		this.fps = fps;
 		try {
 			r = new Robot();
 		} catch (AWTException e) {
@@ -63,8 +66,9 @@ public class Notes {
 		System.out.println("Orig. X: " + originalMouseX + "\nOrig. Y: " + originalMouseY);
 	}
 
-	public Notes(int value) {
+	public Notes(int value, int fps) {
 		cd = value;
+		this.fps = fps;
 	}
 
 	public void play(String note){
@@ -130,6 +134,13 @@ public class Notes {
 		r.mouseMove(newXPos, newYPos);
 
 		rightClick();
+		
+		try {
+			Thread.sleep((long) Math.ceil((double) 1000/fps));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private int getIndexX(int i){
