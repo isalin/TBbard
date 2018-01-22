@@ -16,6 +16,8 @@ For the automated music playback feature to work, after pressing play:
 
 * **WaitMultiplier** is a value that will be multiplied with every wait command. This can make some of the faster songs sound a lot better. 
 
+* **Min FPS** is the minimum fps value that you're experiencing at the current in-game location. FFXIV's UI input is limited by your FPS and a delay is needed inbetween clicks. **Note:** *If you "uncap" your fps to a value higher than your monitor supports, you can still use the higher value.*
+
 * **Start delay** is the delay (in milliseconds) between pressing Play and the application beginning playback. This is to make sure you have time to tab back into FFXIV and move the mouse to the appropriate spot.
 
 ## Syntax
