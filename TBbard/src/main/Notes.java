@@ -1,25 +1,14 @@
 package main;
 
 import java.awt.AWTException;
-import java.awt.MouseInfo;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Notes {
 
 	Robot r;
-
-	int horizontalButtonSpacing = 240;
-	int vertialButtonSpacing = 55;
-
-	boolean inUpper = true; 
-
-	int originalMouseX = 0;
-	int originalMouseY = 0;
-
-	int scrollWaitConstant = 17; //1 frame
 
 	static double cd = 200;
 	static double waitMultiplier = 1;
@@ -29,10 +18,7 @@ public class Notes {
 	long waitTime = 0;
 
 	int slowdownConstant = 0;
-	
-	int newXPos = 0;
-	int newYPos =  0;
-	
+
 	boolean running = true;
 	
 	int fps = 0;
@@ -51,8 +37,35 @@ public class Notes {
 			"B(-1)", "B", "B(+1)",
 			"C(+2)"
 	};
+	
+	/**
+	 * Array to hold the keys corresponding to each note
+	 * TODO Make this configurable by the user
+	 */
+	private int[] keys = {KeyEvent.VK_Q, 
+			KeyEvent.VK_2, 
+			KeyEvent.VK_W,
+			KeyEvent.VK_3,
+			KeyEvent.VK_E,
+			KeyEvent.VK_R,
+			KeyEvent.VK_5,
+			KeyEvent.VK_T,
+			KeyEvent.VK_6,
+			KeyEvent.VK_Y,
+			KeyEvent.VK_7,
+			KeyEvent.VK_U,
+			KeyEvent.VK_I
+	};
 
+	/**
+	 * Array to hold the keys corresponding to the modifiers for the different
+	 * TODO Make this configurable by the user
+	 */
+	private int[] octaveModifiers = {KeyEvent.VK_CONTROL,
+			KeyEvent.VK_SHIFT
+	};
 
+	
 	public Notes(int fps) {
 		this.fps = fps;
 		try {
@@ -61,9 +74,6 @@ public class Notes {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		originalMouseX = (int)MouseInfo.getPointerInfo().getLocation().getX();
-		originalMouseY = (int)MouseInfo.getPointerInfo().getLocation().getY();
-		System.out.println("Orig. X: " + originalMouseX + "\nOrig. Y: " + originalMouseY);
 	}
 
 	public Notes(int value, int fps) {
@@ -71,8 +81,7 @@ public class Notes {
 		this.fps = fps;
 	}
 
-	public void play(String note){
-		
+	public void play(String note) {
 		if(running == false) return;
 
 		note = note.toLowerCase();
@@ -90,50 +99,43 @@ public class Notes {
 		if(matcher.matches()){
 			note = matcher.group(1) + "(" + matcher.group(2) + ")";
 		}
-		int index = 0;
 
 		System.out.println("\n\nPlaying: " + note);
-
+		
+		int index = 0;
+		
 		for(String s : notes){
 			if(s.toLowerCase().equals(note)){
 				pressButton(index);
 				break;
 			}
 			index++;
-
 		}
 
 
 	}
 
-	private void pressButton(int i){
-		i++; //For math 
+	private void pressButton(int i) {
 		System.out.println("Pressing index: " + i);
-		if((inUpper && i > 24) || (!inUpper && i <= 24)){
-			try {
-
-				if(inUpper) goToLower();
-				if(!inUpper) goToUpper();
-				inUpper = !inUpper;
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("inUpper: " + inUpper);
+		
+		checkWaitTime();
+		
+		/* Doing a modulo operation on the index with 3 (Because there are 3 notes, one for each octave in the note table)
+		 * With this we can get the index of the octave variation of the note the index points to */
+		switch(i % 3) {
+		case 0:
+			r.keyPress(this.octaveModifiers[0]);
+			System.out.println("Going down");
+			break;
+		case 2:
+			r.keyPress(this.octaveModifiers[1]);
+			System.out.println("Going Up");
+			break;
 		}
-
-		System.out.println("Right: " + (i % 3) +
-				"\nDown: " + (Math.ceil((float) i / 3)));
-
-		if(i > 24) i = i - 24 + 12;
-
-		newXPos = originalMouseX + getIndexX(i) * horizontalButtonSpacing;
-		newYPos =  (originalMouseY + getIndexY(i) * vertialButtonSpacing);
-
-		r.mouseMove(newXPos, newYPos);
-
-		rightClick();
+		
+		/* Doing integer division with 3 (Because there are 3 notes, one for each octave in the note table we got the index from)
+		 * With this we can get the index of the note of that pseudo-row the index points to */
+		press(i / 3);
 		
 		try {
 			Thread.sleep((long) Math.ceil((double) 1000/fps));
@@ -141,43 +143,26 @@ public class Notes {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		/* Likewise as the first switch statement here */
+		switch(i % 3) {
+		case 0:
+			r.keyRelease(this.octaveModifiers[0]);
+			System.out.println("Releasing Down");
+			break;
+		case 2:
+			r.keyRelease(this.octaveModifiers[1]);
+			System.out.println("Releasing Up");
+			break;
+		}
 	}
 
-	private int getIndexX(int i){
-		int index = ((i % 3) - 1);
-		if(index < 0) index = 2;
-		return index;
-	}
-
-	private int getIndexY(int i){
-		int index = (int) (Math.ceil((float) i / 3) - 1);
-		if(index < 0) index = 0;
-		return index;
-	}
-
-	private void rightClick() {
-
-		checkWaitTime();
-
-		checkInterrupt();
-
-		r.mousePress(InputEvent.BUTTON3_MASK);
+	private void press(int key) {
+		r.keyPress(this.keys[key]);
 		r.delay(1);
-		r.mouseRelease(InputEvent.BUTTON3_MASK);
+		r.keyRelease(this.keys[key]);
 
 		lastTimestamp = System.currentTimeMillis();
-
-	}
-
-	private void checkInterrupt() {
-		if(!((newXPos-5) < (int)MouseInfo.getPointerInfo().getLocation().getX() && (int)MouseInfo.getPointerInfo().getLocation().getX() < (newXPos+5))) {
-			running = false;
-		}
-		
-		if(!((newYPos-5) < (int)MouseInfo.getPointerInfo().getLocation().getY() && (int)MouseInfo.getPointerInfo().getLocation().getY() < (newYPos+5))) {
-			running = false;
-		}
-		
 	}
 
 	private void checkWaitTime(){
@@ -215,28 +200,6 @@ public class Notes {
 		waitTime = 0;
 	}
 
-
-	private void goToUpper() throws Exception{
-		r.setAutoDelay(scrollWaitConstant); //UI requires a frame...
-		r.mouseWheel(-50);
-		r.mouseWheel(-50);
-		r.mouseWheel(-50);
-		r.mouseWheel(-50);
-		r.setAutoDelay(0);
-
-	}
-
-	private void goToLower() throws Exception{
-		r.setAutoDelay(scrollWaitConstant);
-		r.mouseWheel(50);
-		r.mouseWheel(50);
-		r.mouseWheel(50);
-		r.mouseWheel(50);
-		r.setAutoDelay(0);
-
-
-	}
-
 	public void parseSlowdownConstant(String allNotes){
 		slowdownConstant = 0;
 
@@ -246,11 +209,6 @@ public class Notes {
 				Matcher matcher = pattern.matcher(l.toLowerCase());
 				if(matcher.matches()){
 					waitTime = (long) (Long.parseLong((matcher.group(2)))*waitMultiplier);
-
-					if(waitTime < scrollWaitConstant*4){
-						slowdownConstant = (int) (scrollWaitConstant*4 - waitTime);
-					}
-
 				}
 
 			}
