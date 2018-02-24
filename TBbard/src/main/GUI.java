@@ -49,7 +49,9 @@ public class GUI {
 		JLabel lbDelayLabel;
 		JSpinner spnDelaySpinner;
 		JCheckBox loopCheckBox;
-
+		JComboBox cmbSelectedInstrument;
+		JLabel lbLabel5;
+		
 		pnPanel0 = new JPanel();
 		GridBagLayout gbPanel0 = new GridBagLayout();
 		GridBagConstraints gbcPanel0 = new GridBagConstraints();
@@ -248,7 +250,30 @@ public class GUI {
 	    pnPanel1.add( loopCheckBox );
 	    
 
-	    
+	    String []dataSelectedInstrument = { "Chocolate", "Ice Cream", "Apple Pie" };
+	    cmbSelectedInstrument = new JComboBox( dataSelectedInstrument );
+	    gbcPanel1.gridx = 3;
+	    gbcPanel1.gridy = 2;
+	    gbcPanel1.gridwidth = 17;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 0;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( cmbSelectedInstrument, gbcPanel1 );
+	    pnPanel1.add( cmbSelectedInstrument );
+
+	    lbLabel5 = new JLabel( "Instrument:"  );
+	    gbcPanel1.gridx = 0;
+	    gbcPanel1.gridy = 2;
+	    gbcPanel1.gridwidth = 3;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 1;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( lbLabel5, gbcPanel1 );
+	    pnPanel1.add( lbLabel5 );
 	    
 
 		taText.setDropTarget(new DropTarget() {
@@ -265,7 +290,7 @@ public class GUI {
 					System.out.println(selectedInstrument);
 					
 					taText.setText(midi.getNotes(filePath, selectedInstrument, cmbOctaveTargetCombo.getSelectedIndex()-1));
-					frame.setTitle("TBbard");
+					setOpenFile(frame, new File(filePath).getName());
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -297,6 +322,7 @@ public class GUI {
 								}
 							}
 							Thread.sleep(1000); //This lets the game's music buffer catch up if the looping song has a very high tempo
+							
 							}while(loopCheckBox.isSelected() && n.running);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
@@ -327,6 +353,12 @@ public class GUI {
 		frame.setAlwaysOnTop(true);
 		frame.setVisible(true);	
 		frame.requestFocusInWindow();
+	}
+	
+	public void setOpenFile(JFrame frame, String fileName){
+		System.out.println("Setting title to: " + fileName);
+		if(fileName.equals("")) frame.setTitle("TBbard");
+		else frame.setTitle("TBbard - " + fileName);
 	}
 	
 }
