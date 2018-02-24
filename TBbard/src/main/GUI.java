@@ -29,6 +29,8 @@ public class GUI {
 	MidiParser midi;
 	
 	String filePath = "";
+	boolean fileLoaded = false;
+	
 	/** Field to hold the keybind that should stop the playback
 	 * TODO Make this configurable by the user
 	 */
@@ -303,7 +305,7 @@ public class GUI {
 					System.out.println(cmbSelectedInstrument.getSelectedIndex());
 					midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1);
 					
-					taText.setText(midi.getSheet(0));
+					taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
 					setOpenFile(frame, new File(filePath).getName());
 					
 				} catch (Exception ex) {
@@ -313,12 +315,18 @@ public class GUI {
 		});					
 
 		
-		cmbSelectedInstrument.addItemListener(new ItemListener() {
-			
-			
+		cmbSelectedInstrument.addItemListener(new ItemListener() {	
 	        public void itemStateChanged(ItemEvent arg0) {
 	        	System.out.println("Action: " + cmbSelectedInstrument.getSelectedIndex());
-	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex()));
+	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+	        }
+	    });
+		
+		cmbOctaveTargetCombo.addItemListener(new ItemListener() {
+	        public void itemStateChanged(ItemEvent arg0) {
+	        	if(fileLoaded == false) return;
+	        	System.out.println("Action: " + cmbOctaveTargetCombo.getSelectedIndex());
+	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
 	        }
 	    });
 		
@@ -382,7 +390,10 @@ public class GUI {
 	public void setOpenFile(JFrame frame, String fileName){
 		System.out.println("Setting title to: " + fileName);
 		if(fileName.equals("")) frame.setTitle("TBbard");
-		else frame.setTitle("TBbard - " + fileName);
+		else {
+			fileLoaded = true;
+			frame.setTitle("TBbard - " + fileName);
+		}
 	}
 
 	
