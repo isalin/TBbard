@@ -211,6 +211,7 @@ public class GUI {
 					evt.acceptDrop(DnDConstants.ACTION_COPY);
 					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 					String filePath = droppedFiles.get(0).getPath();
+					frame.setTitle("Processing...");
 					midi = new MidiParser(filePath);
 					midi.getInstruments(filePath);
 					InstrumentSelector is = new InstrumentSelector(midi.instruments);
@@ -218,6 +219,7 @@ public class GUI {
 					System.out.println(selectedInstrument);
 					
 					taText.setText(midi.getNotes(filePath, selectedInstrument));
+					frame.setTitle("TBbard");
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -239,7 +241,6 @@ public class GUI {
 
 
 							String text = taText.getText().replace("[", "(").replace("]",")").replace(",","");
-							n.parseSlowdownConstant(text);
 
 
 
@@ -278,4 +279,5 @@ public class GUI {
 		frame.setVisible(true);	
 		frame.requestFocusInWindow();
 	}
+	
 }

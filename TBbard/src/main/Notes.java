@@ -84,7 +84,7 @@ public class Notes {
 		Matcher matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
 			waitTime = Long.parseLong((matcher.group(2)));
-			System.out.println("Waiting for " + (waitTime + slowdownConstant));
+			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
 			return;
 		}
 
@@ -171,22 +171,5 @@ public class Notes {
 		}
 		
 		waitTime = 0;
-	}
-
-	public void parseSlowdownConstant(String allNotes){
-		slowdownConstant = 0;
-
-		for (String line : allNotes.split("\\n")){
-			for (String l : line.split(" ")){
-				Pattern pattern = Pattern.compile("(w|wait) ?(\\d+)");
-				Matcher matcher = pattern.matcher(l.toLowerCase());
-				if(matcher.matches()){
-					waitTime = (long) (Long.parseLong((matcher.group(2)))*waitMultiplier);
-				}
-
-			}
-		};
-
-		System.out.println("SlowdownConstant: " + slowdownConstant);
 	}
 }
