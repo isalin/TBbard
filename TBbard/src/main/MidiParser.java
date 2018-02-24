@@ -40,7 +40,7 @@ public class MidiParser {
 		String sheet = "";
 
 		Sequence sequence = MidiSystem.getSequence(new File(filePath));
-
+		TickConverter converter = new TickConverter(sequence);
 
 		System.out.println("Sequence (MS): " + sequence.getMicrosecondLength()/1000);
 		System.out.println("Sequence (ticks): " + sequence.getTickLength());		
@@ -74,8 +74,8 @@ public class MidiParser {
 					if((sm.getChannel() != instrumentIndex) || (event.getTick() - prevTick) < 3 && firstLineDone) continue;
 
 					if (sm.getCommand() == NOTE_ON) {
-						int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
-						sheet += "\nw" + tick + "\n";
+						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
+						sheet += "\nwait " + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
 						prevTick = event.getTick();
 
 						int key = sm.getData1();
