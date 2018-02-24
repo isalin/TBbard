@@ -11,6 +11,8 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -25,6 +27,8 @@ public class GUI {
 
 	Notes n;
 	MidiParser midi;
+	
+	String filePath = "";
 	/** Field to hold the keybind that should stop the playback
 	 * TODO Make this configurable by the user
 	 */
@@ -250,7 +254,7 @@ public class GUI {
 	    pnPanel1.add( loopCheckBox );
 	    
 
-	    String []dataSelectedInstrument = { "Chocolate", "Ice Cream", "Apple Pie" };
+	    String []dataSelectedInstrument = { "" };
 	    cmbSelectedInstrument = new JComboBox( dataSelectedInstrument );
 	    gbcPanel1.gridx = 3;
 	    gbcPanel1.gridy = 2;
@@ -281,23 +285,43 @@ public class GUI {
 				try {
 					evt.acceptDrop(DnDConstants.ACTION_COPY);
 					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-					String filePath = droppedFiles.get(0).getPath();
+					filePath = droppedFiles.get(0).getPath();
 					frame.setTitle("Processing...");
 					midi = new MidiParser(filePath);
 					midi.getInstruments(filePath);
-					InstrumentSelector is = new InstrumentSelector(midi.instruments);
-					int selectedInstrument = is.showDialogue();
-					System.out.println(selectedInstrument);
+					//InstrumentSelector is = new InstrumentSelector(midi.instruments);
 					
-					taText.setText(midi.getNotes(filePath, selectedInstrument, cmbOctaveTargetCombo.getSelectedIndex()-1));
+					//Update instruments
+					cmbSelectedInstrument.removeAllItems();
+					for(String instrument : midi.instruments){
+						cmbSelectedInstrument.addItem(instrument);
+					}
+				    //cmbSelectedInstrument = new JComboBox(midi.instruments);
+				    
+				    
+					//int selectedInstrument = is.showDialogue();
+					System.out.println(cmbSelectedInstrument.getSelectedIndex());
+					midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1);
+					
+					taText.setText(midi.getSheet(0));
 					setOpenFile(frame, new File(filePath).getName());
 					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
-		});
+		});					
 
+		
+		cmbSelectedInstrument.addItemListener(new ItemListener() {
+			
+			
+	        public void itemStateChanged(ItemEvent arg0) {
+	        	System.out.println("Action: " + cmbSelectedInstrument.getSelectedIndex());
+	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex()));
+	        }
+	    });
+		
 		btPlayButton.addActionListener( new ActionListener()
 		{
 			@Override
@@ -360,5 +384,6 @@ public class GUI {
 		if(fileName.equals("")) frame.setTitle("TBbard");
 		else frame.setTitle("TBbard - " + fileName);
 	}
+
 	
 }

@@ -23,8 +23,11 @@ public class MidiParser {
 	public static final String[] NOTE_NAMES = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B"};
 
 	String[] instruments;
+	String[] sheets = new String[16];
 	
 	String filePath;
+	
+	
 
 
 	public MidiParser(String fileName) {
@@ -35,9 +38,12 @@ public class MidiParser {
 		
 	}
 
-	public String getNotes(String filePath, int instrumentIndex, int octaveTarget) throws Exception{
+	public void getNotes(String filePath, int instrumentIndex, int octaveTarget) throws Exception{
 
-		String sheet = "";
+		for(int i = 0; i < 16; i++){
+			sheets[i] = "";
+		}
+		
 
 		Sequence sequence = MidiSystem.getSequence(new File(filePath));
 		TickConverter converter = new TickConverter(sequence);
@@ -71,28 +77,31 @@ public class MidiParser {
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
+					System.out.println("Channel: " + sm.getChannel());
 
-					if((sm.getChannel() != instrumentIndex) || (event.getTick() - prevTick) < 3 && firstLineDone) continue;
+					if((event.getTick() - prevTick) < 3 && firstLineDone) continue;
 
 					if (sm.getCommand() == NOTE_ON) {
 						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
-						sheet += "\nw" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
+						
+						sheets[sm.getChannel()] += "\nw" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
 						prevTick = event.getTick();
 
 						int key = sm.getData1();
 						int octave = (key / 12)-1;
 						int note = key % 12;
 						String noteName = NOTE_NAMES[note];
-						int velocity = sm.getData2();
+						//int velocity = sm.getData2();
 						//System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-						sheet += noteName;
+						System.out.println(noteName);
+						sheets[sm.getChannel()] += noteName;
 
-						if(octave < octaveTarget) sheet += "-1";
-						if(octave > octaveTarget) sheet += "+1";
+						if(octave < octaveTarget) sheets[sm.getChannel()] += "-1";
+						if(octave > octaveTarget) sheets[sm.getChannel()] += "+1";
 
 						firstLineDone = true;
 
-
+						
 
 					} 
 				} 
@@ -100,7 +109,7 @@ public class MidiParser {
 			//System.out.println();
 		}
 
-		return sheet;
+		return;
 
 	}
 
@@ -159,5 +168,10 @@ public class MidiParser {
 
 			}
 		}
+	}
+	
+	public String getSheet(int i){
+		if(i == -1 || sheets[i] == null) return "";
+		else return sheets[i];
 	}
 }
