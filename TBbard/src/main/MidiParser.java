@@ -84,7 +84,7 @@ public class MidiParser {
 					if (sm.getCommand() == NOTE_ON) {
 						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
 						
-						sheets[sm.getChannel()] += "\nw" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
+						sheets[sm.getChannel()] += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
 						prevTick = event.getTick();
 
 						int key = sm.getData1();
@@ -101,7 +101,7 @@ public class MidiParser {
 
 						firstLineDone = true;
 
-						
+						sheets[sm.getChannel()] += "\n";
 
 					} 
 				} 
