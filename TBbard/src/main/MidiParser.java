@@ -43,7 +43,8 @@ public class MidiParser {
 		TickConverter converter = new TickConverter(sequence);
 
 		System.out.println("Sequence (MS): " + sequence.getMicrosecondLength()/1000);
-		System.out.println("Sequence (ticks): " + sequence.getTickLength());		
+		System.out.println("Sequence (ticks): " + sequence.getTickLength());
+		System.out.println("Target octave: " + octaveTarget);	
 		
 		for(String i : instruments){
 			System.out.println(i);
@@ -86,8 +87,8 @@ public class MidiParser {
 						//System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
 						sheet += noteName;
 
-						if(octave < 5) sheet += "-1";
-						if(octave > 5) sheet += "+1";
+						if(octave < octaveTarget) sheet += "-1";
+						if(octave > octaveTarget) sheet += "+1";
 
 						firstLineDone = true;
 
