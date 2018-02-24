@@ -10,7 +10,6 @@ public class Notes {
 
 	Robot r;
 
-	static double cd = 200;
 	static double waitMultiplier = 1;
 	
 	double lastTimestamp = 0;
@@ -74,11 +73,6 @@ public class Notes {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public Notes(int value, int fps) {
-		cd = value;
-		this.fps = fps;
 	}
 
 	public void play(String note) {
@@ -169,34 +163,13 @@ public class Notes {
 
 		waitTime = (long) (waitTime*waitMultiplier + slowdownConstant);
 		
+		try {
+			Thread.sleep((long) (waitTime));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-
-		if(cd > waitTime){
-			if(lastTimestamp + cd > System.currentTimeMillis())
-				
-				
-				
-				try {
-					Thread.sleep((long) (lastTimestamp + cd - System.currentTimeMillis()));
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		}
-
-		if(cd < waitTime){
-			if(lastTimestamp + waitTime > System.currentTimeMillis())
-				try {
-					Thread.sleep((long) (lastTimestamp + waitTime - System.currentTimeMillis()));
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		}
-
-
-
-
 		waitTime = 0;
 	}
 
