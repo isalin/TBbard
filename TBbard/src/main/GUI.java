@@ -1,5 +1,6 @@
 package main;
 
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import java.awt.GridBagConstraints;
@@ -43,8 +44,11 @@ public class GUI {
 		JSpinner spnCd;
 		JLabel lbFps;
 		JSpinner spnFpsSpinner;
+		JLabel lbLabel4;
+		JComboBox cmbOctaveTargetCombo;
 		JLabel lbDelayLabel;
 		JSpinner spnDelaySpinner;
+		JCheckBox loopCheckBox;
 
 		pnPanel0 = new JPanel();
 		GridBagLayout gbPanel0 = new GridBagLayout();
@@ -100,7 +104,7 @@ public class GUI {
 		gbcPanel1.gridx = 0;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 4;
-		gbcPanel1.gridheight = 2;
+		gbcPanel1.gridheight = 1;
 		gbcPanel1.fill = GridBagConstraints.BOTH;
 		gbcPanel1.weightx = 1;
 		gbcPanel1.weighty = 1;
@@ -114,7 +118,7 @@ public class GUI {
 		gbcPanel1.gridx = 4;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 4;
-		gbcPanel1.gridheight = 2;
+		gbcPanel1.gridheight = 1;
 		gbcPanel1.fill = GridBagConstraints.BOTH;
 		gbcPanel1.weightx = 1;
 		gbcPanel1.weighty = 0;
@@ -128,7 +132,7 @@ public class GUI {
 		gbcPanel1.gridx = 8;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 4;
-		gbcPanel1.gridheight = 2;
+		gbcPanel1.gridheight = 1;
 		gbcPanel1.fill = GridBagConstraints.BOTH;
 		gbcPanel1.weightx = 1;
 		gbcPanel1.weighty = 1;
@@ -140,7 +144,7 @@ public class GUI {
 		gbcPanel1.gridx = 12;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 3;
-		gbcPanel1.gridheight = 2;
+		gbcPanel1.gridheight = 1;
 		gbcPanel1.fill = GridBagConstraints.BOTH;
 		gbcPanel1.weightx = 1;
 		gbcPanel1.weighty = 0;
@@ -152,7 +156,7 @@ public class GUI {
 		gbcPanel1.gridx = 15;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 2;
-		gbcPanel1.gridheight = 2;
+		gbcPanel1.gridheight = 1;
 		gbcPanel1.fill = GridBagConstraints.BOTH;
 		gbcPanel1.weightx = 1;
 		gbcPanel1.weighty = 1;
@@ -164,7 +168,7 @@ public class GUI {
 		gbcPanel1.gridx = 17;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 3;
-		gbcPanel1.gridheight = 2;
+		gbcPanel1.gridheight = 1;
 		gbcPanel1.fill = GridBagConstraints.BOTH;
 		gbcPanel1.weightx = 1;
 		gbcPanel1.weighty = 0;
@@ -204,6 +208,48 @@ public class GUI {
 	        }
 	    });
 	    spnFpsSpinner.setValue(59);
+	    
+	    lbLabel4 = new JLabel( "Octave Target:"  );
+	    gbcPanel1.gridx = 0;
+	    gbcPanel1.gridy = 1;
+	    gbcPanel1.gridwidth = 4;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 1;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( lbLabel4, gbcPanel1 );
+	    pnPanel1.add( lbLabel4 );
+
+	    String []dataOctaveTargetCombo = {"-1", "0", "1", "2", "3", "4", "5 (Default)", "6", "7", "8", "9"};
+	    cmbOctaveTargetCombo = new JComboBox( dataOctaveTargetCombo );
+	    gbcPanel1.gridx = 4;
+	    gbcPanel1.gridy = 1;
+	    gbcPanel1.gridwidth = 6;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 1;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( cmbOctaveTargetCombo, gbcPanel1 );
+	    pnPanel1.add( cmbOctaveTargetCombo );
+	    cmbOctaveTargetCombo.setSelectedIndex(6);
+	    
+	    loopCheckBox = new JCheckBox( "Loop"  );
+	    gbcPanel1.gridx = 18;
+	    gbcPanel1.gridy = 1;
+	    gbcPanel1.gridwidth = 4;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 0;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( loopCheckBox, gbcPanel1 );
+	    pnPanel1.add( loopCheckBox );
+	    
+
+	    
+	    
 
 		taText.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
@@ -218,7 +264,7 @@ public class GUI {
 					int selectedInstrument = is.showDialogue();
 					System.out.println(selectedInstrument);
 					
-					taText.setText(midi.getNotes(filePath, selectedInstrument));
+					taText.setText(midi.getNotes(filePath, selectedInstrument, cmbOctaveTargetCombo.getSelectedIndex()-1));
 					frame.setTitle("TBbard");
 					
 				} catch (Exception ex) {
@@ -236,6 +282,7 @@ public class GUI {
 					public void run() {
 						try {
 							Thread.sleep((int) spnDelaySpinner.getValue());
+							do{
 							n = new Notes((int) spnFpsSpinner.getValue());
 							Notes.waitMultiplier = (double) spnCd.getValue();
 
@@ -249,6 +296,8 @@ public class GUI {
 									n.play(l);
 								}
 							}
+							Thread.sleep(1000); //This lets the game's music buffer catch up if the looping song has a very high tempo
+							}while(loopCheckBox.isSelected() && n.running);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

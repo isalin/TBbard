@@ -35,7 +35,7 @@ public class MidiParser {
 		
 	}
 
-	public String getNotes(String filePath, int instrumentIndex) throws Exception{
+	public String getNotes(String filePath, int instrumentIndex, int octaveTarget) throws Exception{
 
 		String sheet = "";
 
