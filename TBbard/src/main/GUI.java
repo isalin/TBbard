@@ -315,7 +315,7 @@ public class GUI {
 			
 			@Override
 			public boolean accept(File f) {
-				if(f.getName().matches(".+\\.mid") || f.isDirectory()) return true;
+				if(f.getName().toLowerCase().matches(".+\\.mid") || f.isDirectory()) return true;
 				return false;
 			}
 		});
