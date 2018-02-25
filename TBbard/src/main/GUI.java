@@ -7,8 +7,10 @@ import javafx.scene.input.TransferMode;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
@@ -317,7 +319,10 @@ public class GUI {
 				return false;
 			}
 		});
-	    
+	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	    double width = screenSize.getWidth();
+	    double height = screenSize.getHeight();
+	    fc.setPreferredSize(new Dimension((int)(width*0.5), (int)(height*0.5)));
 	    openBtn.addActionListener( new ActionListener()
 	    {
 	        @Override
