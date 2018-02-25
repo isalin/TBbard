@@ -4,6 +4,9 @@
 
 TBbard is a java application for playing back MIDI files in FFXIV using the Bard performance system. 
 
+[Example Usage](https://i.imgur.com/69lORVy.gifv)
+
+
 # Instructions
 
 Notes can be extracted by dragging and dropping a MIDI file onto the application or by clicking "Open" and navigating to the intended file. You can then select the instrument to play back.
