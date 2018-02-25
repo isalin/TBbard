@@ -1,24 +1,39 @@
+**Note:** If nothing happens in FFXIV on playback, you might need to run the application as administrator. To do this, download the accompanying batch file "TBbard_vX.X.**bat**", place it in the same folder as TBbard, right-click it and select run as administrator.
+
 # TBbard
 
 TBbard is a java application for playing back MIDI files in FFXIV using the Bard performance system. 
 
 # Instructions
 
-Notes can be extracted by dragging and dropping a MIDI file onto the application. The user will then be prompted to select an instrument/channel to extract.
+Notes can be extracted by dragging and dropping a MIDI file onto the application or by clicking "Open" and navigating to the intended file. You can then select the instrument to play back.
 
 Alternatively, it's also possible to manually enter or edit the "sheets".
 
-For the automated music playback feature to work, after pressing play:
-* Tab back into FFXIV.
-* Hover the cursor over the "C(-1)" note in the Performance menu (basically just scroll to the top and hover over the top left action).
+For the automated music playback feature to work:
+1. In FFXIV, make sure the perform interface is open and that your character is ready to play.
+2. Drag and drop the file to play, or navigate to the file by using the "Open" dialog (or enter your own notes!).
+3. Click Play.
+4. Tab back to FFXIV, and make sure it's the currently selected window.
+5. Playback should start after the Start Delay.
 
 ## UI description
 
 * **WaitMultiplier** is a value that will be multiplied with every wait command. This can make some of the faster songs sound a lot better. 
 
-* **Min FPS** is the minimum fps value that you're experiencing at the current in-game location. FFXIV's UI input is limited by your FPS and a delay is needed inbetween clicks. **Note:** *If you "uncap" your fps to a value higher than your monitor supports, you can still use the higher value.*
+* **Min FPS** is the minimum fps value that you're experiencing at the current in-game location. FFXIV's UI input is limited by your FPS and a delay is needed in-between clicks. **Note:** *If you "uncap" your fps to a value higher than your monitor supports, you can still use the higher value.*
 
 * **Start delay** is the delay (in milliseconds) between pressing Play and the application beginning playback. This is to make sure you have time to tab back into FFXIV and move the mouse to the appropriate spot.
+
+* **Octave Target** FFXIV's perform system is limited to three octaves, whereas midi can have up to ~10 octaves. TBbard will attempt to convert the notes to sound reasonable, but for some songs you might want to adjust the target octaves (most of the time you'll probably want to leave this on the default).
+
+* **Loop** will cause the playback to loop indefinitely until it's manually stopped. There's a 1 second delay in-between every loop to ket the playback buffer catch back up for fast paced songs.
+
+* **Instrument** refers to the selected MIDI instrument to play.
+
+* **Open** lets you manually browse for a file.
+
+
 
 ## Syntax
 
@@ -35,8 +50,8 @@ For the automated music playback feature to work, after pressing play:
 
 # Limitations
 
-* Bards in FFXIV are limited to 3 octaves, whereas MIDI files are capable of playing back 12 octaves. The application will attempt to convert this in a reasonable way. Unfortunately, some songs simply won't sound recognizable.
+* Bards in FFXIV are limited to 3 octaves, whereas MIDI files are capable of playing back ~10 octaves. The application will attempt to convert this in a reasonable way. Unfortunately, some songs simply won't sound recognizable.
 
-* FFXIV limits the input rate of notes music notes, and instead queues up quickly input notes. This means that fast paced songs sometimes lose their rhythm. This can be partially fixed by increasing the "WaitMultiplier". Many songs will still sound recognizable then played slowly.
+* If you're running the application with User Account Control active, you might have to run TBbard as administrator. To do this conveniently, place the batch file (TBbard_vX.X.bat) in the same folder as TBbard, right-click it and select "Run as Administrator".
 
-* Due to performance considerations, he note C(+2) isn't available at the moment.
+* The drag and drop system doesn't work if the application is run as administrator.
