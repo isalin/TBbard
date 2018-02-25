@@ -20,12 +20,15 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.DefaultFormatter;
 
 public class GUI {
@@ -298,15 +301,33 @@ public class GUI {
 	    gbPanel1.setConstraints( openBtn, gbcPanel1 );
 	    pnPanel1.add( openBtn );
 	    
-	    String filename = File.separator+"tmp";
-	    JFileChooser fc = new JFileChooser(new File(filename));
+	    Path currentRelativePath = Paths.get("");
+	    String s = currentRelativePath.toAbsolutePath().toString();
+	    JFileChooser fc = new JFileChooser(new File(s));
+	    fc.setFileFilter(new FileFilter() {
+			
+			@Override
+			public String getDescription() {
+				return "MIDI Files (.mid)";
+			}
+			
+			@Override
+			public boolean accept(File f) {
+				if(f.getName().matches(".+\\.mid") || f.isDirectory()) return true;
+				return false;
+			}
+		});
+	    
 	    openBtn.addActionListener( new ActionListener()
 	    {
 	        @Override
 	        public synchronized void actionPerformed(ActionEvent e)
 	        {
 	        	try {
-	        	fc.showOpenDialog(frame);
+	        	int selection = fc.showOpenDialog(frame);
+	        	if(selection == JFileChooser.CANCEL_OPTION) return;
+	        	
+	        	
 	        	File selFile = fc.getSelectedFile();
 	        	
 	        	filePath = selFile.getAbsolutePath();
