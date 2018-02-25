@@ -1,5 +1,9 @@
 package main;
 
+import javafx.event.EventHandler;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
+
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
@@ -17,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -260,7 +265,7 @@ public class GUI {
 	    cmbSelectedInstrument = new JComboBox( dataSelectedInstrument );
 	    gbcPanel1.gridx = 3;
 	    gbcPanel1.gridy = 2;
-	    gbcPanel1.gridwidth = 17;
+	    gbcPanel1.gridwidth = 16;
 	    gbcPanel1.gridheight = 1;
 	    gbcPanel1.fill = GridBagConstraints.BOTH;
 	    gbcPanel1.weightx = 1;
@@ -281,7 +286,58 @@ public class GUI {
 	    gbPanel1.setConstraints( lbLabel5, gbcPanel1 );
 	    pnPanel1.add( lbLabel5 );
 	    
-
+	    JButton openBtn = new JButton("Open");
+	    gbcPanel1.gridx = 17;
+	    gbcPanel1.gridy = 2;
+	    gbcPanel1.gridwidth = 18;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 1;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( openBtn, gbcPanel1 );
+	    pnPanel1.add( openBtn );
+	    
+	    String filename = File.separator+"tmp";
+	    JFileChooser fc = new JFileChooser(new File(filename));
+	    openBtn.addActionListener( new ActionListener()
+	    {
+	        @Override
+	        public synchronized void actionPerformed(ActionEvent e)
+	        {
+	        	try {
+	        	fc.showOpenDialog(frame);
+	        	File selFile = fc.getSelectedFile();
+	        	
+	        	filePath = selFile.getAbsolutePath();
+				frame.setTitle("Processing...");
+				midi = new MidiParser(filePath);
+				midi.getInstruments(filePath);
+				//InstrumentSelector is = new InstrumentSelector(midi.instruments);
+				
+				//Update instruments
+				cmbSelectedInstrument.removeAllItems();
+				for(String instrument : midi.instruments){
+					cmbSelectedInstrument.addItem(instrument);
+				}
+			    //cmbSelectedInstrument = new JComboBox(midi.instruments);
+			    
+			    
+				//int selectedInstrument = is.showDialogue();
+				System.out.println(cmbSelectedInstrument.getSelectedIndex());
+				midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1);
+				
+				taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
+				setOpenFile(frame, new File(filePath).getName());
+	        	} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+	        }
+	    });
+	    
+	    
+	    
+	    
 		taText.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
 				try {
