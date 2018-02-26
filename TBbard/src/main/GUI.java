@@ -8,8 +8,10 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -21,6 +23,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -477,6 +481,7 @@ public class GUI {
 			}
 		});
 
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("icon.png"));
 		frame.add(pnPanel0);
 		frame.setSize(600, 500);
 		frame.setTitle("TBbard");
