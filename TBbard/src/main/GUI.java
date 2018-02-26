@@ -420,9 +420,24 @@ public class GUI {
 					@Override
 					public void run() {
 						try {
-							Thread.sleep((int) spnDelaySpinner.getValue());
-							do{
 							n = new Notes((int) spnFpsSpinner.getValue());
+							n.running = true;
+							double countdown = Math.ceil(((int)spnDelaySpinner.getValue())/1000);
+							while(countdown > 0){
+								if(n.running == false){
+									System.out.println("Stopping countdown.");
+									btPlayButton.setText("Play");
+									return;
+								}
+								System.out.println("Countdown (ms): " + countdown);
+								btPlayButton.setText((int)countdown + "...");
+								Thread.sleep(1000);
+								countdown--;
+							}
+							btPlayButton.setText("Playing");
+
+							
+							do{
 							Notes.waitMultiplier = (double) spnCd.getValue();
 
 
@@ -438,6 +453,8 @@ public class GUI {
 							Thread.sleep(1000); //This lets the game's music buffer catch up if the looping song has a very high tempo
 							
 							}while(loopCheckBox.isSelected() && n.running);
+							btPlayButton.setText("Play");
+
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -456,6 +473,7 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				n.running = false;
+				btPlayButton.setText("Play");
 			}
 		});
 
