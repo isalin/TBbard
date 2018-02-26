@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
@@ -26,6 +27,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -480,8 +482,13 @@ public class GUI {
 				btPlayButton.setText("Play");
 			}
 		});
-
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("icon.png"));
+		
+		try {
+			frame.setIconImage(new ImageIcon(Main.class.getResource("/icon.png")).getImage());
+		} catch (Exception e1) {
+			System.out.println("Icon not found.");
+			e1.printStackTrace();
+		}
 		frame.add(pnPanel0);
 		frame.setSize(600, 500);
 		frame.setTitle("TBbard");
