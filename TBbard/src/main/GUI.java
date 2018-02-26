@@ -205,7 +205,7 @@ public class GUI {
 		pnPanel0.add( pnPanel1 );
 
 
-		spnDelaySpinner.setValue(5000);
+		spnDelaySpinner.setValue(3);
 		JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnCd,"0.00"); 
 		spnCd.setEditor(editor);
 		editor = new JSpinner.NumberEditor(spnDelaySpinner, "#"); 
@@ -422,7 +422,7 @@ public class GUI {
 						try {
 							n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
-							double countdown = Math.ceil(((int)spnDelaySpinner.getValue())/1000);
+							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
 							while(countdown > 0){
 								if(n.running == false){
 									System.out.println("Stopping countdown.");
