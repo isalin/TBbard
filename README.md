@@ -1,4 +1,4 @@
-**Note:** If nothing happens in FFXIV on playback, you might need to run the application as administrator. To do this, download the accompanying batch file "TBbard_vX.X.**bat**", place it in the same folder as TBbard, right-click it and select run as administrator.
+**Note:** If nothing happens in FFXIV on playback, you might need to run the application as administrator (right-click the .exe version and "Run as administrator"). Drag and drop does not work when run as admin.
 
 # TBbard
 
@@ -20,6 +20,10 @@ For the automated music playback feature to work:
 4. Tab back to FFXIV, and make sure it's the currently selected window.
 5. Playback should start after the Start Delay.
 
+## Exe or jar
+
+The .exe version is just a wrapper for the .jar version. It's mainly intended as a convenient way to quickly run the application as admin. You still need to have java installed!
+
 ## UI description
 
 * **WaitMultiplier** is a value that will be multiplied with every wait command. This can make some of the faster songs sound a lot better. 
@@ -30,7 +34,7 @@ For the automated music playback feature to work:
 
 * **Octave Target** FFXIV's perform system is limited to three octaves, whereas midi can have up to ~10 octaves. TBbard will attempt to convert the notes to sound reasonable, but for some songs you might want to adjust the target octaves (most of the time you'll probably want to leave this on the default).
 
-* **Loop** will cause the playback to loop indefinitely until it's manually stopped. There's a 1 second delay in-between every loop to ket the playback buffer catch back up for fast paced songs.
+* **Loop** will cause the playback to loop indefinitely until it's manually stopped. There's a 1 second delay in-between every loop to let the playback buffer catch back up for fast paced songs.
 
 * **Instrument** refers to the selected MIDI instrument to play.
 
@@ -55,6 +59,6 @@ For the automated music playback feature to work:
 
 * Bards in FFXIV are limited to 3 octaves, whereas MIDI files are capable of playing back ~10 octaves. The application will attempt to convert this in a reasonable way. Unfortunately, some songs simply won't sound recognizable.
 
-* If you're running the application with User Account Control active, you might have to run TBbard as administrator. To do this conveniently, place the batch file (TBbard_vX.X.bat) in the same folder as TBbard, right-click it and select "Run as Administrator".
+* If you're running the application with User Account Control active, you might have to run TBbard as administrator. To do this conveniently, use the .exe version, right-click it and select "Run as administrator".
 
 * The drag and drop system doesn't work if the application is run as administrator.
