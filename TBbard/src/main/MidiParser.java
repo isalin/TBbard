@@ -94,7 +94,7 @@ public class MidiParser {
 						int note = key % 12;
 						String noteName = NOTE_NAMES[note];
 						//int velocity = sm.getData2();
-						//System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+						//System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
 						//System.out.println(noteName);
 						line += noteName;
 

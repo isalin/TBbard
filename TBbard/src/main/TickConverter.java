@@ -6,8 +6,8 @@ public class TickConverter {
 	
 	Sequence sequence;
 	
-	long sequenceLength = 0;
-	long sequenceTicks = 0;
+	float sequenceLength = 0;
+	float sequenceTicks = 0;
 	
 	public TickConverter(Sequence sequence) {
 			
@@ -19,6 +19,8 @@ public class TickConverter {
 	}
 	
 	public long ticksToMillis(long ticks){
-		return ticks * (sequenceLength/sequenceTicks);
+		//System.out.println("Converting: " + ticks);
+		//System.out.println("Output: " + (sequenceLength/sequenceTicks));
+		return (long)(ticks * (sequenceLength/sequenceTicks));
 	}
 }
