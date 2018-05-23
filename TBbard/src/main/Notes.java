@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class Notes {
 
 	Robot r;
+	int heldKey = -1;
 
 	static double waitMultiplier = 1;
 	
@@ -79,6 +80,7 @@ public class Notes {
 		if(running == false) return;
 
 		note = note.toLowerCase();
+		boolean hold = false;
 
 		Pattern pattern = Pattern.compile("(w|wait) ?(\\d+)");
 		Matcher matcher = pattern.matcher(note.toLowerCase());
@@ -87,7 +89,18 @@ public class Notes {
 			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
 			return;
 		}
+		
+		pattern = Pattern.compile("(h|hold) ?(.b?#?[+-]?[12]?)");
+		matcher = pattern.matcher(note.toLowerCase());
+		if(matcher.matches()){
+			hold = true;
+			System.out.println("Hold next note.");
+			note = matcher.group(2);
+		} else {
+			System.out.println("Don't hold next note.");
+		}
 
+		
 		pattern = Pattern.compile("(.b?#?)([+-][12])");
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
@@ -100,7 +113,7 @@ public class Notes {
 		
 		for(String s : notes){
 			if(s.toLowerCase().equals(note)){
-				pressButton(index);
+				pressButton(index, hold);
 				break;
 			}
 			index++;
@@ -109,7 +122,7 @@ public class Notes {
 
 	}
 
-	private void pressButton(int i) {
+	private void pressButton(int i, boolean hold) {
 		System.out.println("Pressing index: " + i);
 		
 		checkWaitTime();
@@ -129,7 +142,7 @@ public class Notes {
 		
 		/* Doing integer division with 3 (Because there are 3 notes, one for each octave in the note table we got the index from)
 		 * With this we can get the index of the note of that pseudo-row the index points to */
-		press(i / 3);
+		press(i / 3, hold);
 		
 		try {
 			Thread.sleep((long) Math.ceil((double) 1000/fps));
@@ -151,12 +164,24 @@ public class Notes {
 		}
 	}
 
-	private void press(int key) {
+	private void press(int key, boolean hold) {
+		releaseHeldKey();
 		r.keyPress(this.keys[key]);
 		r.delay(1);
-		r.keyRelease(this.keys[key]);
+		if(hold){
+			heldKey = this.keys[key];
+		} else {
+			r.keyRelease(this.keys[key]);
+		}
 
 		lastTimestamp = System.currentTimeMillis();
+	}
+	
+	private void releaseHeldKey(){
+		if(heldKey != -1){
+			r.keyRelease(heldKey);
+			heldKey = -1;
+		}
 	}
 
 	private void checkWaitTime(){

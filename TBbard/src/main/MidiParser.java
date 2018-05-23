@@ -82,7 +82,15 @@ public class MidiParser {
 					//System.out.println("Channel: " + sm.getChannel());
 
 					if((event.getTick() - prevTick) < 3 && firstLineDone) continue;
-
+					
+					if (sm.getCommand() == NOTE_OFF) {
+						int key = sm.getData1();
+						int octave = (key / 12)-1;
+						int note = key % 12;
+						String noteName = NOTE_NAMES[note];
+						System.out.println("Tick: " + event.getTick() + " Note off, " + noteName + octave + " key=" + key);
+					}
+					
 					if (sm.getCommand() == NOTE_ON) {
 						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
 						String line = "";
@@ -94,7 +102,7 @@ public class MidiParser {
 						int note = key % 12;
 						String noteName = NOTE_NAMES[note];
 						//int velocity = sm.getData2();
-						//System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
+						System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
 						//System.out.println(noteName);
 						line += noteName;
 
