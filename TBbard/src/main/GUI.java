@@ -371,7 +371,7 @@ public class GUI {
 			    
 				//int selectedInstrument = is.showDialogue();
 				System.out.println(cmbSelectedInstrument.getSelectedIndex());
-				midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1);
+				midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1, holdCheckBox.isSelected());
 				
 				taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
 				setOpenFile(frame, new File(filePath).getName());
@@ -405,7 +405,7 @@ public class GUI {
 				    
 					//int selectedInstrument = is.showDialogue();
 					System.out.println(cmbSelectedInstrument.getSelectedIndex());
-					midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1);
+					midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1, holdCheckBox.isSelected());
 					
 					taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
 					setOpenFile(frame, new File(filePath).getName());
@@ -443,6 +443,7 @@ public class GUI {
 							n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
 							n.holdNotes = holdCheckBox.isSelected();
+							//n.slowdownConstant = (int) Math.ceil((double) 1000/(int)spnFpsSpinner.getValue());
 							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
 							while(countdown > 0){
 								if(n.running == false){

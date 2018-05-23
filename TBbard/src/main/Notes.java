@@ -10,6 +10,7 @@ public class Notes {
 
 	Robot r;
 	int heldKey = -1;
+	int heldMod = -1;
 
 	static double waitMultiplier = 1;
 
@@ -78,11 +79,15 @@ public class Notes {
 	}
 
 	public void play(String note) {
+		
+		
 		if(running == false) return;
+		System.out.println("\n--- " + note + " ---");
+
 
 		note = note.toLowerCase();
 		boolean hold = false;
-		
+
 		Pattern pattern = Pattern.compile("(r|release)");
 		Matcher matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
@@ -105,13 +110,13 @@ public class Notes {
 		if(matcher.matches()){
 			if(holdNotes){
 				hold = true;
-				System.out.println("Hold next note.");
+				System.out.println("Hold note.");
 			}
 
 			note = matcher.group(2);
 		} else {
 			if(holdNotes){
-				System.out.println("Don't hold next note.");
+				System.out.println("Don't hold note.");
 			}
 		}
 
@@ -122,7 +127,7 @@ public class Notes {
 			note = matcher.group(1) + "(" + matcher.group(2) + ")";
 		}
 
-		System.out.println("\n\nPlaying: " + note);
+		System.out.println("Playing: " + note);
 
 		int index = 0;
 
@@ -141,6 +146,8 @@ public class Notes {
 		System.out.println("Pressing index: " + i);
 
 		checkWaitTime();
+		releaseHeldKey();
+
 		if(i == -1){
 			releaseHeldKey();
 			return;
@@ -151,10 +158,12 @@ public class Notes {
 		switch(i % 3) {
 		case 0:
 			r.keyPress(this.octaveModifiers[0]);
+			if(hold) heldMod = this.octaveModifiers[0];
 			System.out.println("Going down");
 			break;
 		case 2:
 			r.keyPress(this.octaveModifiers[1]);
+			if(hold) heldMod = this.octaveModifiers[1];
 			System.out.println("Going Up");
 			break;
 		}
@@ -171,20 +180,21 @@ public class Notes {
 		}
 
 		/* Likewise as the first switch statement here */
-		switch(i % 3) {
-		case 0:
-			r.keyRelease(this.octaveModifiers[0]);
-			System.out.println("Releasing Down");
-			break;
-		case 2:
-			r.keyRelease(this.octaveModifiers[1]);
-			System.out.println("Releasing Up");
-			break;
+		if(!hold){
+			switch(i % 3) {
+			case 0:
+				r.keyRelease(this.octaveModifiers[0]);
+				System.out.println("Releasing Down");
+				break;
+			case 2:
+				r.keyRelease(this.octaveModifiers[1]);
+				System.out.println("Releasing Up");
+				break;
+			}
 		}
 	}
 
 	private void press(int key, boolean hold) {
-		releaseHeldKey();
 		r.keyPress(this.keys[key]);
 		r.delay(1);
 		if(hold){
@@ -197,10 +207,17 @@ public class Notes {
 	}
 
 	private void releaseHeldKey(){
+		r.delay(1);
 		if(heldKey != -1){
 			r.keyRelease(heldKey);
 			heldKey = -1;
 		}
+		if(heldMod != -1){
+			r.keyRelease(heldMod);
+			heldMod = -1;
+		}
+		r.delay(1);
+		r.waitForIdle();
 	}
 
 	private void checkWaitTime(){

@@ -27,7 +27,8 @@ public class MidiParser {
 	
 	String filePath;
 	
-	
+	String lastNote = "";
+	int lastOctave;
 
 
 	public MidiParser(String fileName) {
@@ -38,7 +39,7 @@ public class MidiParser {
 		
 	}
 
-	public void getNotes(String filePath, int instrumentIndex, int octaveTarget) throws Exception{
+	public void getNotes(String filePath, int instrumentIndex, int octaveTarget, boolean includeHoldRelease) throws Exception{
 
 		for(int ins = 0; ins < 16; ins++){
 			for(int oct = 0; oct < 11; oct++){
@@ -59,6 +60,8 @@ public class MidiParser {
 		}
 
 		//if(true) return "";
+		
+		
 
 
 		int trackNumber = 0;
@@ -75,26 +78,21 @@ public class MidiParser {
 				MidiEvent event = track.get(i);
 
 
-
+				//if((event.getTick() - prevTick) < 1) continue;
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
 					//System.out.println("Channel: " + sm.getChannel());
 
-					if((event.getTick() - prevTick) < 3 && firstLineDone) continue;
 					
-					if (sm.getCommand() == NOTE_OFF) {
-						int key = sm.getData1();
-						int octave = (key / 12)-1;
-						int note = key % 12;
-						String noteName = NOTE_NAMES[note];
-						System.out.println("Tick: " + event.getTick() + " Note off, " + noteName + octave + " key=" + key);
-					}
+					
+					
 					
 					if (sm.getCommand() == NOTE_ON) {
 						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
 						String line = "";
-						line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
+						
+						if(firstLineDone)line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
 						prevTick = event.getTick();
 
 						int key = sm.getData1();
@@ -102,6 +100,8 @@ public class MidiParser {
 						int note = key % 12;
 						String noteName = NOTE_NAMES[note];
 						//int velocity = sm.getData2();
+						lastNote = noteName;
+						lastOctave =  octave;
 						System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
 						//System.out.println(noteName);
 						line += noteName;
@@ -116,17 +116,85 @@ public class MidiParser {
 							sheets[sm.getChannel()][o] += line;
 							if(octave < o) sheets[sm.getChannel()][o] += "-1";
 							if(octave > o) sheets[sm.getChannel()][o] += "+1";
-							sheets[sm.getChannel()][o] += "\n";
+							
 						}
 						
 					} 
+					
+					if (includeHoldRelease && sm.getCommand() == NOTE_OFF) {
+						
+						
+						int key = sm.getData1();
+						int octave = (key / 12)-1;
+						int note = key % 12;
+						String noteName = NOTE_NAMES[note];
+						System.out.println("Tick: " + event.getTick() + " Note off, " + noteName + octave + " key=" + key);
+						System.out.println("Previous note was: " + lastNote);
+						if(lastNote.equals(noteName) && lastOctave == octave){
+							System.out.println("MATCH! Adding hold and release.");
+							addPrefixToPrevLine(sm.getChannel(), "h");
+							String line = "";
+							line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
+							prevTick = event.getTick();
+							for(int o = 0; o < 11; o++){
+								sheets[sm.getChannel()][o] += "\n" + line;
+							}
+							addStringToAllSheets(sm.getChannel(), "release");
+						}
+					}
+					
+					if (sm.getCommand() == NOTE_ON || (includeHoldRelease && sm.getCommand() == NOTE_OFF)) {
+						prevTick = event.getTick();
+						addStringToAllSheets(sm.getChannel(), "\n");
+					}
+					
 				} 
 			}
 			//System.out.println();
 		}
 
+		for(int ins = 0; ins < 16; ins++){
+			for(int oct = 0; oct < 11; oct++){
+			sheets[ins][oct] = sheets[ins][oct].replaceAll("release\nw0\n", "");
+			}
+		}
+		
 		return;
 
+	}
+	
+	private void addPrefixToPrevLine(int instrument, String string) {
+		
+		for(int o = 0; o < 11; o++){
+			String lastNoteConverted = "";
+			lastNoteConverted += lastNote;
+			if(lastOctave < o) lastNoteConverted += "-1";
+			if(lastOctave > o) lastNoteConverted += "+1";
+			
+			//System.out.println("\n\n--- CURRENT STATE ---\n" + sheets[instrument][o]);
+			System.out.println("Note converted to: " + lastNoteConverted);
+			sheets[instrument][o] = sheets[instrument][o].substring(0, sheets[instrument][o].lastIndexOf(lastNoteConverted)) + 
+					string + 
+					lastNoteConverted;
+		}
+	}
+
+	private void addStringToAllSheets(int instrument, String s){
+		for(int o = 0; o < 11; o++){
+			sheets[instrument][o] += s;
+		}
+	}
+	
+	private String convertLastNote(int instrument){
+		String out = "";
+		for(int o = 0; o < 11; o++){
+			out += lastNote;
+			if(lastOctave < o) out += "-1";
+			if(lastOctave > o) out += "+1";
+			
+		}
+		System.out.println("Last note was converted to: " + out);
+		return out;
 	}
 
 	public void getInstruments(String filePath) throws Exception {
