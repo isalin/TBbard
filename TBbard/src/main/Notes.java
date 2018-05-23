@@ -79,8 +79,8 @@ public class Notes {
 	}
 
 	public void play(String note) {
-		
-		
+
+
 		if(running == false) return;
 		System.out.println("\n--- " + note + " ---");
 
@@ -101,6 +101,13 @@ public class Notes {
 		if(matcher.matches()){
 			waitTime = Long.parseLong((matcher.group(2)));
 			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
+			try {
+				Thread.sleep((long) (waitTime));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			waitTime = 0;
 			return;
 		}
 
@@ -143,11 +150,11 @@ public class Notes {
 	}
 
 	private void pressButton(int i, boolean hold) {
-		System.out.println("Pressing index: " + i);
+		
 
-		checkWaitTime();
+		//checkWaitTime();
 		releaseHeldKey();
-
+		System.out.println("Pressing index: " + i);
 		if(i == -1){
 			releaseHeldKey();
 			return;
