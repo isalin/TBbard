@@ -82,9 +82,17 @@ public class Notes {
 
 		note = note.toLowerCase();
 		boolean hold = false;
-
-		Pattern pattern = Pattern.compile("(w|wait) ?(\\d+)");
+		
+		Pattern pattern = Pattern.compile("(r|release)");
 		Matcher matcher = pattern.matcher(note.toLowerCase());
+		if(matcher.matches()){
+			pressButton(-1, hold);
+			System.out.println("\nReleasing key.\n");
+			return;
+		}
+
+		pattern = Pattern.compile("(w|wait) ?(\\d+)");
+		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
 			waitTime = Long.parseLong((matcher.group(2)));
 			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
@@ -133,6 +141,10 @@ public class Notes {
 		System.out.println("Pressing index: " + i);
 
 		checkWaitTime();
+		if(i == -1){
+			releaseHeldKey();
+			return;
+		}
 
 		/* Doing a modulo operation on the index with 3 (Because there are 3 notes, one for each octave in the note table)
 		 * With this we can get the index of the octave variation of the note the index points to */
