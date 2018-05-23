@@ -70,6 +70,7 @@ public class GUI {
 		JComboBox cmbOctaveTargetCombo;
 		JLabel lbDelayLabel;
 		JSpinner spnDelaySpinner;
+		JCheckBox holdCheckBox;
 		JCheckBox loopCheckBox;
 		JComboBox cmbSelectedInstrument;
 		JLabel lbLabel5;
@@ -271,6 +272,19 @@ public class GUI {
 	    gbPanel1.setConstraints( loopCheckBox, gbcPanel1 );
 	    pnPanel1.add( loopCheckBox );
 	    
+	    holdCheckBox = new JCheckBox( "Hold long notes"  );
+	    holdCheckBox.setSelected(true);
+	    gbcPanel1.gridx = 14;
+	    gbcPanel1.gridy = 1;
+	    gbcPanel1.gridwidth = 4;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 0;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( holdCheckBox, gbcPanel1 );
+	    pnPanel1.add( holdCheckBox );
+	    
 
 	    String []dataSelectedInstrument = { "" };
 	    cmbSelectedInstrument = new JComboBox( dataSelectedInstrument );
@@ -428,6 +442,7 @@ public class GUI {
 						try {
 							n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
+							n.holdNotes = holdCheckBox.isSelected();
 							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
 							while(countdown > 0){
 								if(n.running == false){

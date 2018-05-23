@@ -12,7 +12,7 @@ public class Notes {
 	int heldKey = -1;
 
 	static double waitMultiplier = 1;
-	
+
 	double lastTimestamp = 0;
 
 	long waitTime = 0;
@@ -20,7 +20,8 @@ public class Notes {
 	int slowdownConstant = 0;
 
 	boolean running = true;
-	
+	boolean holdNotes = true;
+
 	int fps = 0;
 
 	private String[] notes = {"C(-1)", "C", "C(+1)", 
@@ -37,7 +38,7 @@ public class Notes {
 			"B(-1)", "B", "B(+1)",
 			"C(+2)"
 	};
-	
+
 	/**
 	 * Array to hold the keys corresponding to each note
 	 * TODO Make this configurable by the user
@@ -65,7 +66,7 @@ public class Notes {
 			KeyEvent.VK_SHIFT
 	};
 
-	
+
 	public Notes(int fps) {
 		this.fps = fps;
 		try {
@@ -89,18 +90,24 @@ public class Notes {
 			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
 			return;
 		}
-		
+
+
 		pattern = Pattern.compile("(h|hold) ?(.b?#?[+-]?[12]?)");
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
-			hold = true;
-			System.out.println("Hold next note.");
+			if(holdNotes){
+				hold = true;
+				System.out.println("Hold next note.");
+			}
+
 			note = matcher.group(2);
 		} else {
-			System.out.println("Don't hold next note.");
+			if(holdNotes){
+				System.out.println("Don't hold next note.");
+			}
 		}
 
-		
+
 		pattern = Pattern.compile("(.b?#?)([+-][12])");
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
@@ -108,9 +115,9 @@ public class Notes {
 		}
 
 		System.out.println("\n\nPlaying: " + note);
-		
+
 		int index = 0;
-		
+
 		for(String s : notes){
 			if(s.toLowerCase().equals(note)){
 				pressButton(index, hold);
@@ -124,9 +131,9 @@ public class Notes {
 
 	private void pressButton(int i, boolean hold) {
 		System.out.println("Pressing index: " + i);
-		
+
 		checkWaitTime();
-		
+
 		/* Doing a modulo operation on the index with 3 (Because there are 3 notes, one for each octave in the note table)
 		 * With this we can get the index of the octave variation of the note the index points to */
 		switch(i % 3) {
@@ -139,18 +146,18 @@ public class Notes {
 			System.out.println("Going Up");
 			break;
 		}
-		
+
 		/* Doing integer division with 3 (Because there are 3 notes, one for each octave in the note table we got the index from)
 		 * With this we can get the index of the note of that pseudo-row the index points to */
 		press(i / 3, hold);
-		
+
 		try {
 			Thread.sleep((long) Math.ceil((double) 1000/fps));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		/* Likewise as the first switch statement here */
 		switch(i % 3) {
 		case 0:
@@ -176,7 +183,7 @@ public class Notes {
 
 		lastTimestamp = System.currentTimeMillis();
 	}
-	
+
 	private void releaseHeldKey(){
 		if(heldKey != -1){
 			r.keyRelease(heldKey);
@@ -187,14 +194,14 @@ public class Notes {
 	private void checkWaitTime(){
 
 		waitTime = (long) (waitTime*waitMultiplier + slowdownConstant);
-		
+
 		try {
 			Thread.sleep((long) (waitTime));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		waitTime = 0;
 	}
 }
