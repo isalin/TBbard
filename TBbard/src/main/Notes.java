@@ -213,7 +213,7 @@ public class Notes {
 		lastTimestamp = System.currentTimeMillis();
 	}
 
-	private void releaseHeldKey(){
+	public void releaseHeldKey(){
 		r.delay(1);
 		if(heldKey != -1){
 			r.keyRelease(heldKey);

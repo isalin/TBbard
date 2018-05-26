@@ -481,7 +481,7 @@ public class GUI {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						
+					n.releaseHeldKey();	
 					}
 				}.start(); // We're using a new thread to be able to access Stop still.
 			}
@@ -496,6 +496,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				n.running = false;
 				btPlayButton.setText("Play");
+				n.releaseHeldKey();
 			}
 		});
 		
