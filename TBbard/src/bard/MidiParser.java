@@ -41,6 +41,8 @@ public class MidiParser {
 
 	public void getNotes(String filePath, int instrumentIndex, int octaveTarget, boolean includeHoldRelease) throws Exception{
 
+		includeHoldRelease = true;
+		
 		for(int ins = 0; ins < 16; ins++){
 			for(int oct = 0; oct < 11; oct++){
 			sheets[ins][oct] = "";
@@ -79,6 +81,7 @@ public class MidiParser {
 
 
 				//if((event.getTick() - prevTick) < 1) continue;
+				
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
@@ -96,6 +99,7 @@ public class MidiParser {
 						prevTick = event.getTick();
 
 						int key = sm.getData1();
+						//System.out.println("DATA2: " + sm.getData2());
 						int octave = (key / 12)-1;
 						int note = key % 12;
 						String noteName = NOTE_NAMES[note];
@@ -104,6 +108,7 @@ public class MidiParser {
 						lastOctave =  octave;
 						System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
 						//System.out.println(noteName);
+						if(includeHoldRelease) line += "h";
 						line += noteName;
 
 //						if(octave < octaveTarget) sheets[sm.getChannel()] += "-1";
@@ -132,7 +137,7 @@ public class MidiParser {
 						System.out.println("Previous note was: " + lastNote);
 						if(lastNote.equals(noteName) && lastOctave == octave){
 							System.out.println("MATCH! Adding hold and release.");
-							addPrefixToPrevLine(sm.getChannel(), "h");
+							//addPrefixToPrevLine(sm.getChannel(), "h");
 							String line = "";
 							line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
 							prevTick = event.getTick();
@@ -156,6 +161,7 @@ public class MidiParser {
 		for(int ins = 0; ins < 16; ins++){
 			for(int oct = 0; oct < 11; oct++){
 			sheets[ins][oct] = sheets[ins][oct].replaceAll("release\nw0\n", "");
+			sheets[ins][oct] = sheets[ins][oct].replaceAll("\n+", "\n");
 			}
 		}
 		
