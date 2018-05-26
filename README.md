@@ -40,6 +40,17 @@ The .exe version is just a wrapper for the .jar version. It's mainly intended as
 
 * **Open** lets you manually browse for a file.
 
+* **Use full keyboard layout** means that TBbard will try to use the layout specified in the screenshot (check out the "Full keyboard layout" section below, or click the [?] in the application for more info). Greatly reduces latency, since it doesn't have to keep pressing and holding ctrl/shift.
+
+* **Hold long notes** if selected, it'll hold every note prefixed with "h" or "hold" until another note is to be played or it gets a "release" command. If unchecked it'll just ignore the hold part, and play as it has previously with rapid taps for each note.
+
+## Full keyboard layout
+If you want to use the full keyboard layout, make sure your keys are bound like this:
+![Full keyboard layout](https://i.imgur.com/bGUNHwL.png)
+
+**Q: Why is the layout so weird?**
+
+A: Because there are so many international layouts, and this way they should all be supported (hopefully). 
 
 
 ## Syntax
