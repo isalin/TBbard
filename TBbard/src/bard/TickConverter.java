@@ -1,4 +1,4 @@
-package main;
+package bard;
 
 import javax.sound.midi.Sequence;
 

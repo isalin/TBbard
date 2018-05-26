@@ -1,4 +1,4 @@
-package main;
+package bard;
 
 import javafx.event.EventHandler;
 import java.awt.Cursor;
@@ -146,10 +146,10 @@ public class GUI {
 		gbcPanel1.anchor = GridBagConstraints.NORTH;
 		gbPanel1.setConstraints( lbCd, gbcPanel1 );
 		pnPanel1.add( lbCd );
+		
 
 		SpinnerNumberModel m = new SpinnerNumberModel(1.0, 0, 100.0, 0.1);
 		spnCd = new JSpinner(m);
-		
 		gbcPanel1.gridx = 4;
 		gbcPanel1.gridy = 0;
 		gbcPanel1.gridwidth = 4;
@@ -160,6 +160,8 @@ public class GUI {
 		gbcPanel1.anchor = GridBagConstraints.NORTH;
 		gbPanel1.setConstraints( spnCd, gbcPanel1 );
 		pnPanel1.add( spnCd );
+		
+		
 		
 		
 
@@ -222,12 +224,17 @@ public class GUI {
 		pnPanel0.add( pnPanel1 );
 
 
-		spnDelaySpinner.setValue(3);
+		//spnDelaySpinner.setValue(3);
+		spnDelaySpinner.setValue(Settings.LoadInt("delay"));
+	    if((int)spnDelaySpinner.getValue() <= 0) spnDelaySpinner.setValue(3);
 		JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnCd,"0.00"); 
 		spnCd.setEditor(editor);
 		editor = new JSpinner.NumberEditor(spnDelaySpinner, "#"); 
 		spnDelaySpinner.setEditor(editor);
-		spnCd.setValue(1.0);
+		//spnCd.setValue(1.0);
+		spnCd.setValue(Settings.LoadDouble("waitMult"));
+	    if((double)spnCd.getValue() <= 0) spnCd.setValue(1);
+		
 		
 	    JComponent comp = spnFpsSpinner.getEditor();
 	    JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
@@ -240,9 +247,11 @@ public class GUI {
 	        	int fps = (int) spnFpsSpinner.getValue();
 	        	if(fps == 0) fps = 1;
 	        	lbFps.setText("  Min FPS (Delay=" + (int) Math.ceil((double) 1000/fps) + "):");
+	        	
 	        }
 	    });
-	    spnFpsSpinner.setValue(59);
+	    spnFpsSpinner.setValue(Settings.LoadInt("fps"));
+	    if((int)spnFpsSpinner.getValue() <= 0) spnFpsSpinner.setValue(59);
 	    
 	    lbLabel4 = new JLabel( "Octave Target:"  );
 	    gbcPanel1.gridx = 0;
@@ -281,6 +290,13 @@ public class GUI {
 	    gbcPanel1.anchor = GridBagConstraints.NORTH;
 	    gbPanel1.setConstraints( loopCheckBox, gbcPanel1 );
 	    pnPanel1.add( loopCheckBox );
+	    loopCheckBox.addItemListener(new ItemListener() {
+	        @Override
+	        public void itemStateChanged(ItemEvent e) {
+	            Settings.SaveBool("loop", loopCheckBox.isSelected());
+	        }
+	    });
+	    loopCheckBox.setSelected(Settings.LoadBool("loop"));
 	    
 	    keyboardCheckBox = new JCheckBox( "Use full keyboard layout"  );
 	    keyboardCheckBox.setSelected(false);
@@ -294,6 +310,13 @@ public class GUI {
 	    gbcPanel1.anchor = GridBagConstraints.NORTH;
 	    gbPanel1.setConstraints( keyboardCheckBox, gbcPanel1 );
 	    pnPanel1.add( keyboardCheckBox );
+	    keyboardCheckBox.addItemListener(new ItemListener() {
+	        @Override
+	        public void itemStateChanged(ItemEvent e) {
+	            Settings.SaveBool("fullkeyboard", keyboardCheckBox.isSelected());
+	        }
+	    });
+	    keyboardCheckBox.setSelected(Settings.LoadBool("fullkeyboard"));
 	    
 	    lbLabel6 = new JLabel("<html><a href=\"" + Keyboard.IMG + "\">[?]</a></html>");
 	    lbLabel6.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -343,6 +366,13 @@ public class GUI {
 	    gbcPanel1.anchor = GridBagConstraints.NORTH;
 	    gbPanel1.setConstraints( holdCheckBox, gbcPanel1 );
 	    pnPanel1.add( holdCheckBox );
+	    holdCheckBox.addItemListener(new ItemListener() {
+	        @Override
+	        public void itemStateChanged(ItemEvent e) {
+	            Settings.SaveBool("hold", holdCheckBox.isSelected());
+	        }
+	    });
+	    holdCheckBox.setSelected(Settings.LoadBool("hold"));
 	    
 
 	    String []dataSelectedInstrument = { "" };
@@ -499,6 +529,9 @@ public class GUI {
 					@Override
 					public void run() {
 						try {
+							Settings.SaveInt("fps", (int)spnFpsSpinner.getValue());
+							Settings.SaveInt("delay", (int)spnDelaySpinner.getValue());
+							Settings.SaveDouble("waitMult", (double)spnCd.getValue());
 							n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
 							n.holdNotes = holdCheckBox.isSelected();

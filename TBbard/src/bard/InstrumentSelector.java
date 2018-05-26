@@ -1,4 +1,4 @@
-package main;
+package bard;
 
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;

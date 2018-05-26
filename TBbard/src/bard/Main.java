@@ -1,9 +1,10 @@
-package main;
+package bard;
 
 public class Main {
 
 	public static void main(String[] args) {
 		//debug();
+		new Settings();
 		new GUI();
 	}
 
