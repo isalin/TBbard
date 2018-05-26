@@ -3,6 +3,8 @@ package main;
 import java.awt.event.KeyEvent;
 
 public class Keyboard {
+	
+	public static String IMG = "https://i.imgur.com/AwmwHOX.png";
 
 	private String[] notes = {"C(-1)", "C", "C(+1)", 
 			"C#(-1)", "C#", "C#(+1)", 

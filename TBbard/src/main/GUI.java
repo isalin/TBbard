@@ -1,6 +1,14 @@
 package main;
 
 import javafx.event.EventHandler;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 
@@ -75,6 +83,7 @@ public class GUI {
 		JCheckBox loopCheckBox;
 		JComboBox cmbSelectedInstrument;
 		JLabel lbLabel5;
+		JLabel lbLabel6;
 		
 		pnPanel0 = new JPanel();
 		GridBagLayout gbPanel0 = new GridBagLayout();
@@ -277,14 +286,50 @@ public class GUI {
 	    keyboardCheckBox.setSelected(false);
 	    gbcPanel1.gridx = 10;
 	    gbcPanel1.gridy = 1;
-	    gbcPanel1.gridwidth = 4;
+	    gbcPanel1.gridwidth = 1;
 	    gbcPanel1.gridheight = 1;
 	    gbcPanel1.fill = GridBagConstraints.BOTH;
-	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weightx = 0;
 	    gbcPanel1.weighty = 0;
 	    gbcPanel1.anchor = GridBagConstraints.NORTH;
 	    gbPanel1.setConstraints( keyboardCheckBox, gbcPanel1 );
 	    pnPanel1.add( keyboardCheckBox );
+	    
+	    lbLabel6 = new JLabel("<html><a href=\"" + Keyboard.IMG + "\">[?]</a></html>");
+	    lbLabel6.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	    gbcPanel1.gridx = 11;
+	    gbcPanel1.gridy = 1;
+	    gbcPanel1.gridwidth = 1;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 0;
+	    gbcPanel1.weighty = 0;
+	    gbcPanel1.anchor = GridBagConstraints.SOUTH;
+	    gbPanel1.setConstraints( lbLabel6, gbcPanel1 );
+	    pnPanel1.add( lbLabel6 );
+	    lbLabel6.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                    try {
+                    	JFrame keyFrame = new JFrame();
+                    	JPanel panel = new JPanel(); 
+                        panel.setSize(500,640);
+                        //panel.setBackground(Color.CYAN); 
+                        ImageIcon icon = new ImageIcon(new ImageIcon(Main.class.getResource("/keyboardLayout.png")).getImage()); 
+                        JLabel label = new JLabel(); 
+                        label.setIcon(icon); 
+                        panel.add(label);
+                        keyFrame.add(panel);
+                        keyFrame.setAlwaysOnTop(true);
+                        keyFrame.setSize(icon.getIconWidth()+25, icon.getIconHeight()+50);
+                        keyFrame.setTitle("TBbard - Full keyboard layout");
+                        keyFrame.setIconImage(new ImageIcon(Main.class.getResource("/icon.png")).getImage());
+                        keyFrame.setVisible(true);                        
+                    } catch (Exception ex) {
+                            //It looks like there's a problem
+                    }
+            }
+        });
 	    
 	    holdCheckBox = new JCheckBox( "Hold long notes"  );
 	    holdCheckBox.setSelected(true);
