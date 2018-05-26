@@ -70,6 +70,7 @@ public class GUI {
 		JComboBox cmbOctaveTargetCombo;
 		JLabel lbDelayLabel;
 		JSpinner spnDelaySpinner;
+		JCheckBox keyboardCheckBox;
 		JCheckBox holdCheckBox;
 		JCheckBox loopCheckBox;
 		JComboBox cmbSelectedInstrument;
@@ -272,6 +273,19 @@ public class GUI {
 	    gbPanel1.setConstraints( loopCheckBox, gbcPanel1 );
 	    pnPanel1.add( loopCheckBox );
 	    
+	    keyboardCheckBox = new JCheckBox( "Use full keyboard layout"  );
+	    keyboardCheckBox.setSelected(false);
+	    gbcPanel1.gridx = 10;
+	    gbcPanel1.gridy = 1;
+	    gbcPanel1.gridwidth = 4;
+	    gbcPanel1.gridheight = 1;
+	    gbcPanel1.fill = GridBagConstraints.BOTH;
+	    gbcPanel1.weightx = 1;
+	    gbcPanel1.weighty = 0;
+	    gbcPanel1.anchor = GridBagConstraints.NORTH;
+	    gbPanel1.setConstraints( keyboardCheckBox, gbcPanel1 );
+	    pnPanel1.add( keyboardCheckBox );
+	    
 	    holdCheckBox = new JCheckBox( "Hold long notes"  );
 	    holdCheckBox.setSelected(true);
 	    gbcPanel1.gridx = 14;
@@ -443,6 +457,7 @@ public class GUI {
 							n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
 							n.holdNotes = holdCheckBox.isSelected();
+							n.fullKeyboard = keyboardCheckBox.isSelected();
 							//n.slowdownConstant = (int) Math.ceil((double) 1000/(int)spnFpsSpinner.getValue());
 							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
 							while(countdown > 0){

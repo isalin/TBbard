@@ -22,6 +22,9 @@ public class Notes {
 
 	boolean running = true;
 	boolean holdNotes = true;
+	
+	boolean fullKeyboard = false;
+	Keyboard kbrd = new Keyboard();
 
 	int fps = 0;
 
@@ -138,25 +141,33 @@ public class Notes {
 
 		int index = 0;
 
-		for(String s : notes){
-			if(s.toLowerCase().equals(note)){
-				pressButton(index, hold);
-				break;
+		if(fullKeyboard){
+			releaseHeldKey();
+			press(kbrd.getKey(note), hold);
+		} else {
+			for(String s : notes){
+				if(s.toLowerCase().equals(note)){
+					
+					pressButton(index, hold);
+					break;
+				}
+				index++;
 			}
-			index++;
 		}
+
+
 
 
 	}
 
 	private void pressButton(int i, boolean hold) {
-		
+
 
 		//checkWaitTime();
 		releaseHeldKey();
 		System.out.println("Pressing index: " + i);
 		if(i == -1){
-			releaseHeldKey();
+//			releaseHeldKey();
 			return;
 		}
 
@@ -202,12 +213,24 @@ public class Notes {
 	}
 
 	private void press(int key, boolean hold) {
-		r.keyPress(this.keys[key]);
+		if(key == -1){
+			System.out.println("Key does not exist.");
+			return;
+		}
+		
+		int keyToPress = 0;
+		if(fullKeyboard){
+			keyToPress = key;
+		} else {
+			keyToPress = this.keys[key];
+		}
+		
+		r.keyPress(keyToPress);
 		r.delay(1);
 		if(hold){
-			heldKey = this.keys[key];
+			heldKey = keyToPress;
 		} else {
-			r.keyRelease(this.keys[key]);
+			r.keyRelease(keyToPress);
 		}
 
 		lastTimestamp = System.currentTimeMillis();
