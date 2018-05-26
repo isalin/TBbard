@@ -12,7 +12,7 @@ public class Notes {
 	int heldKey = -1;
 	int heldMod = -1;
 
-	static double waitMultiplier = 1;
+	double waitMultiplier = 1;
 
 	double lastTimestamp = 0;
 
@@ -103,6 +103,7 @@ public class Notes {
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
 			waitTime = Long.parseLong((matcher.group(2)));
+			waitTime = (long) (waitTime*waitMultiplier + slowdownConstant);
 			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
 			try {
 				Thread.sleep((long) (waitTime));

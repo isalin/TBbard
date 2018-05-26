@@ -536,6 +536,7 @@ public class GUI {
 							n.running = true;
 							n.holdNotes = holdCheckBox.isSelected();
 							n.fullKeyboard = keyboardCheckBox.isSelected();
+							n.waitMultiplier = (double)spnCd.getValue();
 							//n.slowdownConstant = (int) Math.ceil((double) 1000/(int)spnFpsSpinner.getValue());
 							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
 							while(countdown > 0){
@@ -553,7 +554,7 @@ public class GUI {
 
 							
 							do{
-							Notes.waitMultiplier = (double) spnCd.getValue();
+							//Notes.waitMultiplier = (double) spnCd.getValue();
 
 
 							String text = taText.getText().replace("[", "(").replace("]",")").replace(",","");
