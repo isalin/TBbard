@@ -232,8 +232,8 @@ public class GUI {
 		editor = new JSpinner.NumberEditor(spnDelaySpinner, "#"); 
 		spnDelaySpinner.setEditor(editor);
 		//spnCd.setValue(1.0);
-		spnCd.setValue(Settings.LoadDouble("waitMult"));
-	    if((double)spnCd.getValue() <= 0) spnCd.setValue(1);
+		spnCd.setValue(Settings.LoadDouble("waitmult"));
+	    if((double)spnCd.getValue() <= 0) spnCd.setValue((double)1);
 		
 		
 	    JComponent comp = spnFpsSpinner.getEditor();
@@ -531,7 +531,7 @@ public class GUI {
 						try {
 							Settings.SaveInt("fps", (int)spnFpsSpinner.getValue());
 							Settings.SaveInt("delay", (int)spnDelaySpinner.getValue());
-							Settings.SaveDouble("waitMult", (double)spnCd.getValue());
+							Settings.SaveDouble("waitmult", (double)spnCd.getValue());
 							n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
 							n.holdNotes = holdCheckBox.isSelected();
