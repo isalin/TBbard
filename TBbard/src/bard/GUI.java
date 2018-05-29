@@ -537,7 +537,7 @@ public class GUI {
 							n.holdNotes = holdCheckBox.isSelected();
 							n.fullKeyboard = keyboardCheckBox.isSelected();
 							n.waitMultiplier = (double)spnCd.getValue();
-							//n.slowdownConstant = (int) Math.ceil((double) 1000/(int)spnFpsSpinner.getValue());
+							n.slowdownConstant = (int) Math.ceil((double) 1000/(int)spnFpsSpinner.getValue());
 							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
 							while(countdown > 0){
 								if(n.running == false){

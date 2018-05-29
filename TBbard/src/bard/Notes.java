@@ -238,7 +238,8 @@ public class Notes {
 	}
 
 	public void releaseHeldKey(){
-		r.delay(1);
+		System.out.println("Releasing key:" + heldKey);
+		r.delay(17);
 		if(heldKey != -1){
 			r.keyRelease(heldKey);
 			heldKey = -1;
@@ -247,13 +248,13 @@ public class Notes {
 			r.keyRelease(heldMod);
 			heldMod = -1;
 		}
-		r.delay(1);
-		r.waitForIdle();
+		r.delay(slowdownConstant);
+		//r.waitForIdle();
 	}
 
 	private void checkWaitTime(){
 
-		waitTime = (long) (waitTime*waitMultiplier + slowdownConstant);
+		waitTime = (long) (waitTime*waitMultiplier);
 
 		try {
 			Thread.sleep((long) (waitTime));

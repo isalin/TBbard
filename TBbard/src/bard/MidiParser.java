@@ -80,7 +80,9 @@ public class MidiParser {
 				MidiEvent event = track.get(i);
 
 
-				//if((event.getTick() - prevTick) < 1) continue;
+				if((event.getTick() - prevTick) < 1 && firstLineDone) continue;
+				
+				
 				
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
@@ -124,10 +126,13 @@ public class MidiParser {
 							
 						}
 						
-					} 
+					} else 
 					
 					if (includeHoldRelease && sm.getCommand() == NOTE_OFF) {
 						
+						if(i+1 <= track.size() && track.get(i+1).getMessage() instanceof ShortMessage && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && (track.get(i+1).getTick() - event.getTick()) < 1){
+							continue;
+						}
 						
 						int key = sm.getData1();
 						int octave = (key / 12)-1;
@@ -146,10 +151,12 @@ public class MidiParser {
 							}
 							addStringToAllSheets(sm.getChannel(), "release");
 						}
+						lastNote = "";
+						lastOctave = -10;
 					}
 					
 					if (sm.getCommand() == NOTE_ON || (includeHoldRelease && sm.getCommand() == NOTE_OFF)) {
-						prevTick = event.getTick();
+						//prevTick = event.getTick();
 						addStringToAllSheets(sm.getChannel(), "\n");
 					}
 					
