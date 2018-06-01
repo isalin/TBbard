@@ -103,8 +103,14 @@ public class Notes {
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
 			waitTime = Long.parseLong((matcher.group(2)));
-			waitTime = (long) (waitTime*waitMultiplier + slowdownConstant);
-			System.out.println("Waiting for " + (waitTime*waitMultiplier + slowdownConstant));
+			
+			waitTime = (long) (waitTime*waitMultiplier);
+			if(waitTime < slowdownConstant){
+				System.out.println("Playback faster than framerate. Increasing wait.");
+				waitTime = slowdownConstant;
+			}
+			
+			System.out.println("Waiting for " + (waitTime));
 			try {
 				Thread.sleep((long) (waitTime));
 			} catch (InterruptedException e) {
