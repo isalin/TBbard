@@ -80,7 +80,7 @@ public class MidiParser {
 				MidiEvent event = track.get(i);
 
 
-				if((i+1 < track.size()) && (track.get(i+1).getTick() - event.getTick()) < 10 && firstLineDone) continue;
+				if((i+1 < track.size()) && (track.get(i+1).getTick() - event.getTick()) < 2 && firstLineDone) continue;
 				
 				
 				
@@ -93,7 +93,7 @@ public class MidiParser {
 					
 					
 					
-					if (sm.getCommand() == NOTE_ON) {
+					if ((sm.getCommand() == NOTE_ON) && (sm.getData2() > 0)) {
 						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
 						String line = "";
 						
@@ -128,9 +128,9 @@ public class MidiParser {
 						
 					} else 
 					
-					if (includeHoldRelease && sm.getCommand() == NOTE_OFF) {
+					if (includeHoldRelease && (sm.getCommand() == NOTE_OFF || (sm.getData2() == 0))) {
 						
-						if(i+1 <= track.size() && track.get(i+1).getMessage() instanceof ShortMessage && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && (track.get(i+1).getTick() - event.getTick()) < 10){
+						if(i+1 <= track.size() && track.get(i+1).getMessage() instanceof ShortMessage && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && (track.get(i+1).getTick() - event.getTick()) < 2){
 							continue;
 						}
 						
