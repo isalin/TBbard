@@ -80,7 +80,7 @@ public class MidiParser {
 				MidiEvent event = track.get(i);
 
 
-				if((event.getTick() - prevTick) < 1 && firstLineDone) continue;
+				if((i+1 < track.size()) && (track.get(i+1).getTick() - event.getTick()) < 10 && firstLineDone) continue;
 				
 				
 				
@@ -130,7 +130,7 @@ public class MidiParser {
 					
 					if (includeHoldRelease && sm.getCommand() == NOTE_OFF) {
 						
-						if(i+1 <= track.size() && track.get(i+1).getMessage() instanceof ShortMessage && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && (track.get(i+1).getTick() - event.getTick()) < 1){
+						if(i+1 <= track.size() && track.get(i+1).getMessage() instanceof ShortMessage && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && (track.get(i+1).getTick() - event.getTick()) < 10){
 							continue;
 						}
 						
