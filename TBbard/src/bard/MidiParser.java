@@ -121,9 +121,16 @@ public class MidiParser {
 						
 						for(int o = 0; o < 11; o++){
 							sheets[sm.getChannel()][o] += line;
-							if(octave < o) sheets[sm.getChannel()][o] += "-1";
-							if(octave > o) sheets[sm.getChannel()][o] += "+1";
-							
+							if(noteName.equals("C") && octave > o+1){
+								sheets[sm.getChannel()][o] += "+2";
+							} else {
+								if(octave < o) {
+									sheets[sm.getChannel()][o] += "-1";
+								}
+								if(octave > o) {
+									sheets[sm.getChannel()][o] += "+1";
+								}
+							}	
 						}
 						
 					} else 
