@@ -450,19 +450,27 @@ public class GUI {
 				midi.getInstruments(filePath);
 				//InstrumentSelector is = new InstrumentSelector(midi.instruments);
 				
-				//Update instruments
-				cmbSelectedInstrument.removeAllItems();
-				for(String instrument : midi.instruments){
-					cmbSelectedInstrument.addItem(instrument);
-				}
+				
 			    //cmbSelectedInstrument = new JComboBox(midi.instruments);
 			    
 			    
 				//int selectedInstrument = is.showDialogue();
 				System.out.println(cmbSelectedInstrument.getSelectedIndex());
 				midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1, holdCheckBox.isSelected());
-				
+				//Update instruments
+				cmbSelectedInstrument.removeAllItems();
+				for(String instrument : midi.instruments){
+					cmbSelectedInstrument.addItem(instrument);
+				}
+
 				taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
+
+				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
+				cmbOctaveTargetCombo.setModel(model);
+				cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
+	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+
+				
 				setOpenFile(frame, new File(filePath).getName());
 	        	} catch (Exception ex) {
 					ex.printStackTrace();
@@ -484,11 +492,7 @@ public class GUI {
 					midi.getInstruments(filePath);
 					//InstrumentSelector is = new InstrumentSelector(midi.instruments);
 					
-					//Update instruments
-					cmbSelectedInstrument.removeAllItems();
-					for(String instrument : midi.instruments){
-						cmbSelectedInstrument.addItem(instrument);
-					}
+					
 				    //cmbSelectedInstrument = new JComboBox(midi.instruments);
 				    
 				    
@@ -496,7 +500,20 @@ public class GUI {
 					System.out.println(cmbSelectedInstrument.getSelectedIndex());
 					midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1, holdCheckBox.isSelected());
 					
+					//Update instruments
+					cmbSelectedInstrument.removeAllItems();
+					for(String instrument : midi.instruments){
+						cmbSelectedInstrument.addItem(instrument);
+					}
+					
 					taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
+					
+					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
+					cmbOctaveTargetCombo.setModel(model);
+					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
+		        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+
+					
 					setOpenFile(frame, new File(filePath).getName());
 					
 				} catch (Exception ex) {
@@ -509,6 +526,11 @@ public class GUI {
 		cmbSelectedInstrument.addItemListener(new ItemListener() {	
 	        public void itemStateChanged(ItemEvent arg0) {
 	        	System.out.println("Action: " + cmbSelectedInstrument.getSelectedIndex());
+	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+	        	if(cmbSelectedInstrument.getSelectedIndex() == -1) return;
+	        	DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
+				cmbOctaveTargetCombo.setModel(model);
+				cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
 	        	taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
 	        }
 	    });
