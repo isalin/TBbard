@@ -609,6 +609,7 @@ public class GUI {
 								taText.getCaret().setSelectionVisible(true);
 								String[] splitLines = text.split("\\n");
 								for (int i = 0; i < splitLines.length; i++){
+									if(n.running == false) break;
 									int noteLength = splitLines[i].length() + 1;
 									System.out.println("charsProcessed=" + charsProcessed + ", noteLength=" + noteLength);
 									taText.requestFocusInWindow();
@@ -643,7 +644,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				n.running = false;
 				btPlayButton.setText("Play");
-				n.releaseHeldKey();
+				//n.releaseHeldKey();
 			}
 		});
 
