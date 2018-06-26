@@ -205,6 +205,7 @@ public class MidiParser {
 
 	public String[] getOctaveQuality(int instrument){
 		for(int q = 0; q < 11; q++){
+			//System.out.println("Instrument: " + (instrument) + ", q: " + q);
 			octaves[q] = (q-1) + " (quality: " + (quality[instrument][q]) + "%)";
 			System.out.println("Octave quality " + (q-1) + ": " + quality[instrument][q]);
 		} 

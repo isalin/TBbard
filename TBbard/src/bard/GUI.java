@@ -525,13 +525,16 @@ public class GUI {
 					//Update instruments
 					cmbSelectedInstrument.removeAllItems();
 					for(String instrument : midi.instruments){
+						if(instrument == null) instrument = "";
 						cmbSelectedInstrument.addItem(instrument);
 					}
 
 					taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
 
+					
 					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
 					cmbOctaveTargetCombo.setModel(model);
+					
 					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
 					taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
 
@@ -547,7 +550,7 @@ public class GUI {
 
 		cmbSelectedInstrument.addItemListener(new ItemListener() {	
 			public void itemStateChanged(ItemEvent arg0) {
-				System.out.println("Action: " + cmbSelectedInstrument.getSelectedIndex());
+				System.out.println("Instrument dropdown selection: " + cmbSelectedInstrument.getSelectedIndex());
 				taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
 				if(cmbSelectedInstrument.getSelectedIndex() == -1) return;
 				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
@@ -560,7 +563,7 @@ public class GUI {
 		cmbOctaveTargetCombo.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				if(fileLoaded == false) return;
-				System.out.println("Action: " + cmbOctaveTargetCombo.getSelectedIndex());
+				System.out.println("Octave target dropdown selection: " + cmbOctaveTargetCombo.getSelectedIndex());
 				taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
 			}
 		});
@@ -606,7 +609,6 @@ public class GUI {
 								taText.getCaret().setSelectionVisible(true);
 								String[] splitLines = text.split("\\n");
 								for (int i = 0; i < splitLines.length; i++){
-									if(n.running == false) break;
 									int noteLength = splitLines[i].length() + 1;
 									System.out.println("charsProcessed=" + charsProcessed + ", noteLength=" + noteLength);
 									taText.requestFocusInWindow();
