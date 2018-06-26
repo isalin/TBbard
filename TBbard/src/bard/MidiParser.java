@@ -33,10 +33,13 @@ public class MidiParser {
 
 	String lastNote = "";
 	int lastOctave;
+	
+	boolean trueTimings = false;
 
 
-	public MidiParser(String fileName) {
+	public MidiParser(String fileName, boolean trueTimings) {
 		filePath = fileName;
+		this.trueTimings = trueTimings;
 	}
 
 	public void parseFile(String filePath){
@@ -85,7 +88,7 @@ public class MidiParser {
 				MidiEvent event = track.get(i);
 
 
-				if((i+1 < track.size()) && (track.get(i+1).getTick() - event.getTick()) < 2 && firstLineDone) continue;
+				if(firstLineDone && (i+1 < track.size()) && (track.get(i+1).getTick() - event.getTick()) < 2) continue;
 
 
 
@@ -104,7 +107,7 @@ public class MidiParser {
 						//int tick = Math.round((event.getTick() - prevTick)*sequence.getTickLength()/(sequence.getMicrosecondLength()/1000));
 						String line = "";
 
-						if(firstLineDone)line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
+						if(firstLineDone || trueTimings)line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
 						prevTick = event.getTick();
 
 						int key = sm.getData1();

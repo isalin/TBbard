@@ -83,6 +83,7 @@ public class GUI {
 		JCheckBox keyboardCheckBox;
 		JCheckBox holdCheckBox;
 		JCheckBox loopCheckBox;
+		JCheckBox trueTimingsCheckBox;
 		JComboBox cmbSelectedInstrument;
 		JLabel lbLabel5;
 		JLabel lbLabel6;
@@ -299,6 +300,25 @@ public class GUI {
 			}
 		});
 		loopCheckBox.setSelected(Settings.LoadBool("loop"));
+		
+		trueTimingsCheckBox = new JCheckBox( "True Timings"  );
+		gbcPanel1.gridx = 20;
+		gbcPanel1.gridy = 1;
+		gbcPanel1.gridwidth = 4;
+		gbcPanel1.gridheight = 1;
+		gbcPanel1.fill = GridBagConstraints.BOTH;
+		gbcPanel1.weightx = 1;
+		gbcPanel1.weighty = 0;
+		gbcPanel1.anchor = GridBagConstraints.NORTH;
+		gbPanel1.setConstraints( trueTimingsCheckBox, gbcPanel1 );
+		pnPanel1.add( trueTimingsCheckBox );
+		trueTimingsCheckBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				Settings.SaveBool("truetimings", trueTimingsCheckBox.isSelected());
+			}
+		});
+		trueTimingsCheckBox.setSelected(Settings.LoadBool("truetimings"));
 
 		keyboardCheckBox = new JCheckBox( "Use full keyboard layout"  );
 		keyboardCheckBox.setSelected(false);
@@ -448,7 +468,7 @@ public class GUI {
 
 					filePath = selFile.getAbsolutePath();
 					frame.setTitle("Processing...");
-					midi = new MidiParser(filePath);
+					midi = new MidiParser(filePath, trueTimingsCheckBox.isSelected());
 					midi.getInstruments(filePath);
 					//InstrumentSelector is = new InstrumentSelector(midi.instruments);
 
@@ -490,7 +510,7 @@ public class GUI {
 					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 					filePath = droppedFiles.get(0).getPath();
 					frame.setTitle("Processing...");
-					midi = new MidiParser(filePath);
+					midi = new MidiParser(filePath, trueTimingsCheckBox.isSelected());
 					midi.getInstruments(filePath);
 					//InstrumentSelector is = new InstrumentSelector(midi.instruments);
 
@@ -625,7 +645,7 @@ public class GUI {
 			e1.printStackTrace();
 		}
 		frame.add(pnPanel0);
-		frame.setSize(600, 500);
+		frame.setSize(675, 500);
 		frame.setTitle("TBbard");
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
