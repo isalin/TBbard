@@ -595,20 +595,27 @@ public class GUI {
 								countdown--;
 							}
 							btPlayButton.setText("Playing");
+							
 
 
 							do{
 								//Notes.waitMultiplier = (double) spnCd.getValue();
 
-
+								int charsProcessed = 0;
 								String text = taText.getText().replace("[", "(").replace("]",")").replace(",","");
-
+								taText.getCaret().setSelectionVisible(true);
 								String[] splitLines = text.split("\\n");
-
 								for (int i = 0; i < splitLines.length; i++){
+									if(n.running == false) break;
+									int noteLength = splitLines[i].length() + 1;
+									System.out.println("charsProcessed=" + charsProcessed + ", noteLength=" + noteLength);
+									taText.requestFocusInWindow();
+									//taText.requestFocus();
+									taText.select(charsProcessed, charsProcessed + noteLength);
 									String nextNote = null;
 									if(i+1 < splitLines.length) nextNote = splitLines[i+1];
 									n.play(splitLines[i], nextNote);
+									charsProcessed += noteLength;
 								}
 								Thread.sleep(1000); //This lets the game's music buffer catch up if the looping song has a very high tempo
 
