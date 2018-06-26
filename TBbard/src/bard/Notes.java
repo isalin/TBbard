@@ -11,6 +11,7 @@ public class Notes {
 	Robot r;
 	int heldKey = -1;
 	int heldMod = -1;
+	String lastNote = "null";
 
 	double waitMultiplier = 1;
 
@@ -22,7 +23,7 @@ public class Notes {
 
 	boolean running = true;
 	boolean holdNotes = true;
-	
+
 	boolean fullKeyboard = false;
 	Keyboard kbrd = new Keyboard();
 
@@ -81,14 +82,19 @@ public class Notes {
 		}
 	}
 
-	public void play(String note) {
+	public void play(String note, String nextNote) {
 
 
 		if(running == false) return;
-		System.out.println("\n--- " + note + " ---");
-
-
+		
 		note = note.toLowerCase();
+		if(nextNote != null) nextNote = nextNote.toLowerCase();
+		
+		System.out.println("\n--- " + note + " ---");
+		System.out.println("NextNote: " + nextNote);
+		System.out.println("LastNote: " + lastNote);
+
+		
 		boolean hold = false;
 
 		Pattern pattern = Pattern.compile("(r|release)");
@@ -103,16 +109,31 @@ public class Notes {
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
 			waitTime = Long.parseLong((matcher.group(2)));
-			
+
 			waitTime = (long) (waitTime*waitMultiplier);
 			if(waitTime < slowdownConstant){
 				System.out.println("Playback faster than framerate. Increasing wait.");
 				waitTime = slowdownConstant;
 			}
 			
+			boolean nextNoteIsSame = false;
+			if(nextNote != null && lastNote.equals(nextNote)){
+				System.out.println("The next note is the same as the held note. Adjusting wait time by " + slowdownConstant*2 + " ms (your fps delay), and releasing held key.");
+				waitTime -= slowdownConstant*2;
+				nextNoteIsSame = true;
+			}
+
 			System.out.println("Waiting for " + (waitTime));
 			try {
-				Thread.sleep((long) (waitTime));
+				if(waitTime < 0){
+					System.out.println("WaitTime is less than 0. Ignoring...");
+				} else {
+					Thread.sleep((long) (waitTime));
+					if(nextNoteIsSame){
+						releaseHeldKey();
+						Thread.sleep((long) (slowdownConstant*2));
+					}
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -129,8 +150,9 @@ public class Notes {
 				hold = true;
 				System.out.println("Hold note.");
 			}
-
+			lastNote = note;
 			note = matcher.group(2);
+			
 		} else {
 			if(holdNotes){
 				System.out.println("Don't hold note.");
@@ -142,6 +164,7 @@ public class Notes {
 		matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
 			note = matcher.group(1) + "(" + matcher.group(2) + ")";
+			lastNote = note;
 		}
 
 		System.out.println("Playing: " + note);
@@ -154,7 +177,7 @@ public class Notes {
 		} else {
 			for(String s : notes){
 				if(s.toLowerCase().equals(note)){
-					
+
 					pressButton(index, hold);
 					break;
 				}
@@ -174,7 +197,7 @@ public class Notes {
 		releaseHeldKey();
 		System.out.println("Pressing index: " + i);
 		if(i == -1){
-//			releaseHeldKey();
+			//			releaseHeldKey();
 			return;
 		}
 
@@ -224,14 +247,14 @@ public class Notes {
 			System.out.println("Key does not exist.");
 			return;
 		}
-		
+
 		int keyToPress = 0;
 		if(fullKeyboard){
 			keyToPress = key;
 		} else {
 			keyToPress = this.keys[key];
 		}
-		
+
 		r.keyPress(keyToPress);
 		r.delay(1);
 		if(hold){
@@ -245,7 +268,6 @@ public class Notes {
 
 	public void releaseHeldKey(){
 		System.out.println("Releasing key:" + heldKey);
-		r.delay(17);
 		if(heldKey != -1){
 			r.keyRelease(heldKey);
 			heldKey = -1;
@@ -254,8 +276,8 @@ public class Notes {
 			r.keyRelease(heldMod);
 			heldMod = -1;
 		}
-		r.delay(slowdownConstant);
-		//r.waitForIdle();
+		//r.delay(1);
+		r.waitForIdle();
 	}
 
 	private void checkWaitTime(){
