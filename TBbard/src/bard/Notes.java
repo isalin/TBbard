@@ -111,10 +111,10 @@ public class Notes {
 			waitTime = Long.parseLong((matcher.group(2)));
 
 			waitTime = (long) (waitTime*waitMultiplier);
-			if(waitTime < slowdownConstant){
-				System.out.println("Playback faster than framerate. Increasing wait.");
-				waitTime = slowdownConstant;
-			}
+//			if(waitTime < slowdownConstant){
+//				System.out.println("Playback faster than framerate. Increasing wait.");
+//				waitTime = slowdownConstant;
+//			}
 			
 			boolean nextNoteIsSame = false;
 			if(nextNote != null && lastNote.equals(nextNote)){
