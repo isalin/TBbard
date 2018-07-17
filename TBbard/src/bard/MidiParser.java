@@ -16,6 +16,8 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 
+import org.omg.CosNaming.IstringHelper;
+
 public class MidiParser {
 
 	public static final int NOTE_ON = 0x90;
@@ -88,7 +90,7 @@ public class MidiParser {
 				MidiEvent event = track.get(i);
 
 
-				if(firstLineDone && (i+1 < track.size()) && (track.get(i+1).getTick() - event.getTick()) < 2) continue;
+				if(firstLineDone && (i+1 < track.size()) && (track.get(i+1).getMessage() instanceof ShortMessage)&& (track.get(i).getMessage() instanceof ShortMessage) && (track.get(i+1).getTick() - event.getTick()) < 2 && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && ((ShortMessage)track.get(i).getMessage()).getCommand() == NOTE_ON) continue;
 
 
 
