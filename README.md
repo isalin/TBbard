@@ -30,19 +30,23 @@ The .exe version is just a wrapper for the .jar version. It's mainly intended as
 
 * **Min FPS** is the minimum fps value that you're experiencing at the current in-game location. FFXIV's UI input is limited by your FPS and a delay is needed in-between clicks. **Note:** *If you "uncap" your fps to a value higher than your monitor supports, you can still use the higher value.*
 
-* **Start delay** is the delay (in milliseconds) between pressing Play and the application beginning playback. This is to make sure you have time to tab back into FFXIV and move the mouse to the appropriate spot.
+* **Start delay** is the delay (in seconds) between pressing Play and the application beginning playback. This is to make sure you have time to tab back into FFXIV and move the mouse to the appropriate spot.
 
-* **Octave Target** FFXIV's perform system is limited to three octaves, whereas midi can have up to ~10 octaves. TBbard will attempt to convert the notes to sound reasonable, but for some songs you might want to adjust the target octaves (most of the time you'll probably want to leave this on the default).
+* **Octave Target** FFXIV's perform system is limited to three octaves, whereas midi can have up to ~10 octaves. TBbard will attempt to convert the notes to sound reasonable, but for some songs you might want to adjust the target octaves. The percentage indicates the portion of the song that's accurately playable in that octave.
+
+* **Use full keyboard layout** means that TBbard will try to use the layout specified in the screenshot (check out the "Full keyboard layout" section below, or click the [?] in the application for more info). This greatly reduces latency and is highly recommended, since it doesn't have to keep pressing and holding ctrl/shift which will delay everything by an extra frame.
+
+* **Hold long notes** if selected, it'll hold every note prefixed with "h" or "hold" until another note is to be played or it gets a "release" command. If unchecked it'll just ignore the hold part, and play as it has previously with rapid taps for each note. This is recommended to be on for a more accurate playback.
 
 * **Loop** will cause the playback to loop indefinitely until it's manually stopped. There's a 1 second delay in-between every loop to let the playback buffer catch back up for fast paced songs.
+
+* **True timings** means that TBbard will __*not*__ ignore the initial wait time for an instrument (ex if the drums start 30 seconds into the song, then with this on, TBbard will wait 30 seconds before it starts playing). This is mainly useful when attempting to sync up multiple player's intruments for compositions, and is otherwise recommended to be off.
 
 * **Instrument** refers to the selected MIDI instrument to play.
 
 * **Open** lets you manually browse for a file.
 
-* **Use full keyboard layout** means that TBbard will try to use the layout specified in the screenshot (check out the "Full keyboard layout" section below, or click the [?] in the application for more info). Greatly reduces latency, since it doesn't have to keep pressing and holding ctrl/shift.
 
-* **Hold long notes** if selected, it'll hold every note prefixed with "h" or "hold" until another note is to be played or it gets a "release" command. If unchecked it'll just ignore the hold part, and play as it has previously with rapid taps for each note.
 
 ## Full keyboard layout
 If you want to use the full keyboard layout, make sure your keys are bound like this:
@@ -50,7 +54,7 @@ If you want to use the full keyboard layout, make sure your keys are bound like 
 
 **Q: Why is the layout so weird?**
 
-A: Because there are so many international layouts, and this way they should all be supported (hopefully). 
+A: Because there are so many international keyboardlayouts, and this way they should all be supported (hopefully). 
 
 
 ## Syntax
@@ -60,7 +64,7 @@ A: Because there are so many international layouts, and this way they should all
 
 * There is no need to write the parenthesis. "C-1" will work in place of "C(-1)".
 
-* Space and line break are both interpreted as a division between two notes. 
+* Line break is interpreted as a division between two notes. 
 
 * Typos and malformed notes are simply ignored.
 
@@ -73,3 +77,26 @@ A: Because there are so many international layouts, and this way they should all
 * If you're running the application with User Account Control active, you might have to run TBbard as administrator. To do this conveniently, use the .exe version, right-click it and select "Run as administrator".
 
 * The drag and drop system doesn't work if the application is run as administrator.
+
+
+# FAQ
+
+#### Why is there a number next to each instrument?
+
+The number reflects the midi channel index and is mostly intended for people making their own midi files for playback.
+
+
+#### I have an issue, but I'm not sure if it's a bug or not?
+
+Feel free to open an issue, chances are that other people are having the same problem and I just haven't noticed!
+
+
+#### I want to play around with the code. How do I get this to compile?
+
+Personally, I use eclipse. All you need to do after importing the project is get JavaFX working. In eclipse, this means: 
+
+```
+Eclipse > Help > Install New Software... > Select your release in the "Work with: " dropdown > Find and install "e(fx)clipse" in the list
+``` 
+
+More detailed install instructions can be found [here](http://www.eclipse.org/efxclipse/install.html).
