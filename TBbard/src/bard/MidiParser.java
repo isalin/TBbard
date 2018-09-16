@@ -2,6 +2,8 @@ package bard;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,7 @@ public class MidiParser {
 	public static final String []octaves = {"-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 	String[] instruments;
+	List<String> shownInstruments = new ArrayList<String>();
 	String[][] sheets = new String[16][11];
 	Integer[][] quality = new Integer[16][11];
 	Integer[] totalNotes = new Integer[16];
@@ -204,8 +207,20 @@ public class MidiParser {
 		return;
 
 	}
+	
+	public int convertShownInstrument(String shown) {
+		int index = 0;
+		for(String instrument : instruments) {
+			if(instrument != null && instrument.equals(shown)) {
+				return index;
+			}
+			index++;
+		}
+		return -1;
+	}
 
-	public String[] getOctaveQuality(int instrument){
+	public String[] getOctaveQuality(String shownInstrument){
+		int instrument = convertShownInstrument(shownInstrument);
 		for(int q = 0; q < 11; q++){
 			//System.out.println("Instrument: " + (instrument) + ", q: " + q);
 			octaves[q] = (q-1) + " (quality: " + (quality[instrument][q]) + "%)";
@@ -234,7 +249,8 @@ public class MidiParser {
 		//System.out.println("Highest quality is octave " + (getHighestQualityOctave()-1) + " (index=" + getHighestQualityOctave() + ")");
 	}
 
-	public int getHighestQualityOctave(int instrument){
+	public int getHighestQualityOctave(String shownInstrument){
+		int instrument = convertShownInstrument(shownInstrument);
 		int highest = 6; //Octave 5 is the default
 		for(int q = 0; q < 11; q++){
 			if(quality[instrument][q] > quality[instrument][highest]) highest = q;
@@ -335,9 +351,18 @@ public class MidiParser {
 
 			}
 		}
+		
+		for(String instrument : instruments) {
+			System.out.println("PROCESSING INSTRUMENT: '" + instrument + "'");
+			if(instrument != null) {
+				shownInstruments.add(instrument);
+			}
+		}
+		
 	}
 
-	public String getSheet(int instrument, int octave){
+	public String getSheet(String shownInstrument, int octave){
+		int instrument = convertShownInstrument(shownInstrument);
 		if(instrument == -1 || sheets[instrument][octave] == null) return "";
 		else return sheets[instrument][octave];
 	}

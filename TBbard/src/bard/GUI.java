@@ -485,12 +485,12 @@ public class GUI {
 						cmbSelectedInstrument.addItem(instrument);
 					}
 
-					taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
+					taText.setText(midi.getSheet((String)cmbSelectedInstrument.getItemAt(0), cmbOctaveTargetCombo.getSelectedIndex()));
 
-					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
+					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality((String)cmbSelectedInstrument.getSelectedItem()));
 					cmbOctaveTargetCombo.setModel(model);
-					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
-					taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave((String)cmbSelectedInstrument.getSelectedItem()));
+					taText.setText(midi.getSheet((String)cmbSelectedInstrument.getSelectedItem(), cmbOctaveTargetCombo.getSelectedIndex()));
 
 
 					setOpenFile(frame, new File(filePath).getName());
@@ -524,19 +524,19 @@ public class GUI {
 
 					//Update instruments
 					cmbSelectedInstrument.removeAllItems();
-					for(String instrument : midi.instruments){
+					for(String instrument : midi.shownInstruments){
 						if(instrument == null) instrument = "";
 						cmbSelectedInstrument.addItem(instrument);
 					}
 
-					taText.setText(midi.getSheet(0, cmbOctaveTargetCombo.getSelectedIndex()));
+					taText.setText(midi.getSheet((String)cmbSelectedInstrument.getItemAt(0), cmbOctaveTargetCombo.getSelectedIndex()));
 
 					
-					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
+					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality((String)cmbSelectedInstrument.getSelectedItem()));
 					cmbOctaveTargetCombo.setModel(model);
 					
-					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
-					taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave((String)cmbSelectedInstrument.getSelectedItem()));
+					taText.setText(midi.getSheet((String)cmbSelectedInstrument.getSelectedItem(), cmbOctaveTargetCombo.getSelectedIndex()));
 
 
 					setOpenFile(frame, new File(filePath).getName());
@@ -551,12 +551,12 @@ public class GUI {
 		cmbSelectedInstrument.addItemListener(new ItemListener() {	
 			public void itemStateChanged(ItemEvent arg0) {
 				System.out.println("Instrument dropdown selection: " + cmbSelectedInstrument.getSelectedIndex());
-				taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+				taText.setText(midi.getSheet((String)cmbSelectedInstrument.getSelectedItem(), cmbOctaveTargetCombo.getSelectedIndex()));
 				if(cmbSelectedInstrument.getSelectedIndex() == -1) return;
-				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality(cmbSelectedInstrument.getSelectedIndex()));
+				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality((String)cmbSelectedInstrument.getSelectedItem()));
 				cmbOctaveTargetCombo.setModel(model);
-				cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave(cmbSelectedInstrument.getSelectedIndex()));
-				taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+				cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave((String)cmbSelectedInstrument.getSelectedItem()));
+				taText.setText(midi.getSheet((String)cmbSelectedInstrument.getSelectedItem(), cmbOctaveTargetCombo.getSelectedIndex()));
 			}
 		});
 
@@ -564,7 +564,7 @@ public class GUI {
 			public void itemStateChanged(ItemEvent arg0) {
 				if(fileLoaded == false) return;
 				System.out.println("Octave target dropdown selection: " + cmbOctaveTargetCombo.getSelectedIndex());
-				taText.setText(midi.getSheet(cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()));
+				taText.setText(midi.getSheet((String)cmbSelectedInstrument.getSelectedItem(), cmbOctaveTargetCombo.getSelectedIndex()));
 			}
 		});
 
