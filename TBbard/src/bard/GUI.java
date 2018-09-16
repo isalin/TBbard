@@ -481,7 +481,8 @@ public class GUI {
 					midi.getNotes(filePath, cmbSelectedInstrument.getSelectedIndex(), cmbOctaveTargetCombo.getSelectedIndex()-1, holdCheckBox.isSelected());
 					//Update instruments
 					cmbSelectedInstrument.removeAllItems();
-					for(String instrument : midi.instruments){
+					for(String instrument : midi.shownInstruments){
+						if(instrument == null) instrument = "";
 						cmbSelectedInstrument.addItem(instrument);
 					}
 
