@@ -313,7 +313,11 @@ public class MidiParser {
 							Matcher matcher = pattern.matcher(instr[sm.getData1()].toString());
 							if(matcher.matches()){
 								if(instruments[sm.getChannel()] == null) instruments[sm.getChannel()] = (sm.getChannel() + 1) + ". " + matcher.group(1);
-								else instruments[sm.getChannel()] += ", " + matcher.group(1);
+								else {
+									if(!instruments[sm.getChannel()].contains(matcher.group(1))) {
+										instruments[sm.getChannel()] += ", " + matcher.group(1);
+									}
+								}
 
 							}
 
