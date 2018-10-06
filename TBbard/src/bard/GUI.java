@@ -51,14 +51,17 @@ import javax.swing.text.DefaultFormatter;
 
 public class GUI {
 
-	Notes n;
+	// Notes n;
+	Thread playingThread;
+	Thread countdownThread;
 	MidiParser midi;
 
 	String filePath = "";
 	boolean fileLoaded = false;
 
-	/** Field to hold the keybind that should stop the playback
-	 * TODO Make this configurable by the user
+	/**
+	 * Field to hold the keybind that should stop the playback TODO Make this
+	 * configurable by the user
 	 */
 	int stopPlayback = KeyEvent.VK_ESCAPE;
 
@@ -300,7 +303,7 @@ public class GUI {
 			}
 		});
 		loopCheckBox.setSelected(Settings.LoadBool("loop"));
-		
+
 		trueTimingsCheckBox = new JCheckBox( "True Timings"  );
 		gbcPanel1.gridx = 20;
 		gbcPanel1.gridy = 1;
@@ -532,10 +535,10 @@ public class GUI {
 
 					taText.setText(midi.getSheet((String)cmbSelectedInstrument.getItemAt(0), cmbOctaveTargetCombo.getSelectedIndex()));
 
-					
+
 					DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(midi.getOctaveQuality((String)cmbSelectedInstrument.getSelectedItem()));
 					cmbOctaveTargetCombo.setModel(model);
-					
+
 					cmbOctaveTargetCombo.setSelectedIndex(midi.getHighestQualityOctave((String)cmbSelectedInstrument.getSelectedItem()));
 					taText.setText(midi.getSheet((String)cmbSelectedInstrument.getSelectedItem(), cmbOctaveTargetCombo.getSelectedIndex()));
 
@@ -573,20 +576,55 @@ public class GUI {
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Thread() { // Making a new thread instead of sleeping the old one
+				if(countdownThread != null && countdownThread.isAlive()) {
+					return;
+				}
+
+				if(btPlayButton.getText().equals("Playing")) {
+					playingThread.suspend();
+					btPlayButton.setText("Paused");
+					return;
+				} else
+					if(btPlayButton.getText().equals("Paused")) {
+						countdownThread = new Thread() { // Making a new thread instead of sleeping the old one
+							@Override
+							public void run() {
+								try {
+									double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
+									while(countdown > 0){
+										System.out.println("Countdown (ms): " + countdown);
+										btPlayButton.setText((int)countdown + "...");
+										Thread.sleep(1000);
+										countdown--;
+									}
+								} catch(Exception e) {
+									
+								}
+								playingThread.resume();
+								btPlayButton.setText("Playing");
+							}
+						};
+						countdownThread.start();
+
+						
+						return;
+					}
+
+				playingThread = new Thread() { // Making a new thread instead of sleeping the old one
 					@Override
 					public void run() {
 						try {
 							Settings.SaveInt("fps", (int)spnFpsSpinner.getValue());
 							Settings.SaveInt("delay", (int)spnDelaySpinner.getValue());
 							Settings.SaveDouble("waitmult", (double)spnCd.getValue());
-							n = new Notes((int) spnFpsSpinner.getValue());
+							Notes n = new Notes((int) spnFpsSpinner.getValue());
 							n.running = true;
 							n.holdNotes = holdCheckBox.isSelected();
 							n.fullKeyboard = keyboardCheckBox.isSelected();
 							n.waitMultiplier = (double)spnCd.getValue();
 							n.slowdownConstant = (int) Math.ceil((double) 1000/(int)spnFpsSpinner.getValue());
 							double countdown = Math.ceil(((int)spnDelaySpinner.getValue()));
+							countdownThread = this;
 							while(countdown > 0){
 								if(n.running == false){
 									System.out.println("Stopping countdown.");
@@ -598,8 +636,9 @@ public class GUI {
 								Thread.sleep(1000);
 								countdown--;
 							}
+							countdownThread = null;
 							btPlayButton.setText("Playing");
-							
+
 
 
 							do{
@@ -625,14 +664,15 @@ public class GUI {
 
 							}while(loopCheckBox.isSelected() && n.running);
 							btPlayButton.setText("Play");
-
+							n.releaseHeldKey();
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						n.releaseHeldKey();	
+						//n.releaseHeldKey();	
 					}
-				}.start(); // We're using a new thread to be able to access Stop still.
+				};
+				playingThread.start();// We're using a new thread to be able to access Stop still.
 			}
 		});
 
@@ -643,7 +683,14 @@ public class GUI {
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				n.running = false;
+				//n.running = false;
+				if (playingThread != null){
+					playingThread.stop();
+				}
+				if (countdownThread != null){
+					countdownThread.stop();
+				}
+
 				btPlayButton.setText("Play");
 				//n.releaseHeldKey();
 			}
@@ -665,14 +712,14 @@ public class GUI {
 		frame.requestFocusInWindow();
 	}
 
-	public void setOpenFile(JFrame frame, String fileName){
+	public void setOpenFile(JFrame frame, String fileName) {
 		System.out.println("Setting title to: " + fileName);
-		if(fileName.equals("")) frame.setTitle("TBbard");
+		if (fileName.equals(""))
+			frame.setTitle("TBbard");
 		else {
 			fileLoaded = true;
 			frame.setTitle("TBbard - " + fileName);
 		}
 	}
-
 
 }
