@@ -576,6 +576,7 @@ public class GUI {
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				taText.requestFocusInWindow();
 				if(countdownThread != null && countdownThread.isAlive()) {
 					return;
 				}
@@ -673,6 +674,7 @@ public class GUI {
 					}
 				};
 				playingThread.start();// We're using a new thread to be able to access Stop still.
+				taText.requestFocusInWindow();
 			}
 		});
 
@@ -684,6 +686,7 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//n.running = false;
+				taText.requestFocusInWindow();
 				if (playingThread != null){
 					playingThread.stop();
 				}
@@ -692,6 +695,7 @@ public class GUI {
 				}
 
 				btPlayButton.setText("Play");
+				taText.requestFocusInWindow();
 				//n.releaseHeldKey();
 			}
 		});
