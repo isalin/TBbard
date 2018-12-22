@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 
 public class Notes {
 
-	Robot r;
-	int heldKey = -1;
-	int heldMod = -1;
+	static Robot r;
+	static int heldKey = -1;
+	static int heldMod = -1;
 	String lastNote = "null";
 
 	double waitMultiplier = 1;
@@ -266,7 +266,7 @@ public class Notes {
 		lastTimestamp = System.currentTimeMillis();
 	}
 
-	public void releaseHeldKey(){
+	public static void releaseHeldKey(){
 		System.out.println("Releasing key:" + heldKey);
 		if(heldKey != -1){
 			r.keyRelease(heldKey);

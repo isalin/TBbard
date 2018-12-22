@@ -528,7 +528,13 @@ public class GUI {
 
 					//Update instruments
 					cmbSelectedInstrument.removeAllItems();
+					for(String instrument : midi.instruments){
+						System.out.println("--- REAL instrument: " + instrument);
+						
+					}
+					
 					for(String instrument : midi.shownInstruments){
+						System.out.println("Shown instrument: " + instrument);
 						if(instrument == null) instrument = "";
 						cmbSelectedInstrument.addItem(instrument);
 					}

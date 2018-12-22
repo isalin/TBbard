@@ -40,6 +40,8 @@ public class MidiParser {
 	int lastOctave;
 	
 	boolean trueTimings = false;
+	
+	boolean allNull = true;
 
 
 	public MidiParser(String fileName, boolean trueTimings) {
@@ -72,7 +74,7 @@ public class MidiParser {
 		System.out.println("Target octave: " + octaveTarget);	
 
 		for(String i : instruments){
-			System.out.println(i);
+			System.out.println("About to get notes, found instrument: " + i);
 		}
 
 		//if(true) return "";
@@ -123,7 +125,7 @@ public class MidiParser {
 						//int velocity = sm.getData2();
 						lastNote = noteName;
 						lastOctave =  octave;
-						System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
+						//System.out.println("Tick: " + event.getTick() + " Note on, " + noteName + octave + " key=" + key);
 						//System.out.println(noteName);
 						if(includeHoldRelease) line += "h";
 						line += noteName;
@@ -151,7 +153,7 @@ public class MidiParser {
 								if(octave == o) quality[sm.getChannel()][o]++;
 							}	
 						}
-
+						checkIfChannelIsIndexed(sm.getChannel());
 					} else 
 
 						if (includeHoldRelease && (sm.getCommand() == NOTE_OFF || (sm.getData2() == 0))) {
@@ -164,10 +166,10 @@ public class MidiParser {
 							int octave = (key / 12)-1;
 							int note = key % 12;
 							String noteName = NOTE_NAMES[note];
-							System.out.println("Tick: " + event.getTick() + " Note off, " + noteName + octave + " key=" + key);
-							System.out.println("Previous note was: " + lastNote);
+							//System.out.println("Tick: " + event.getTick() + " Note off, " + noteName + octave + " key=" + key);
+							//System.out.println("Previous note was: " + lastNote);
 							if(lastNote.equals(noteName) && lastOctave == octave){
-								System.out.println("MATCH! Adding hold and release.");
+								//System.out.println("MATCH! Adding hold and release.");
 								//addPrefixToPrevLine(sm.getChannel(), "h");
 								String line = "";
 								line += "w" + converter.ticksToMillis(event.getTick() - prevTick) + "\n";
@@ -192,6 +194,16 @@ public class MidiParser {
 
 			//System.out.println();
 
+		}
+		
+		shownInstruments = new ArrayList<String>();
+		for(String ins : instruments) {
+			System.out.println("PROCESSING INSTRUMENT: '" + ins + "'");
+
+			if(ins != null) {
+				shownInstruments.add(ins);
+				allNull = false;
+			}
 		}
 
 		for(int ins = 0; ins < 16; ins++){
@@ -221,10 +233,14 @@ public class MidiParser {
 
 	public String[] getOctaveQuality(String shownInstrument){
 		int instrument = convertShownInstrument(shownInstrument);
+		
 		for(int q = 0; q < 11; q++){
-			//System.out.println("Instrument: " + (instrument) + ", q: " + q);
-			octaves[q] = (q-1) + " (quality: " + (quality[instrument][q]) + "%)";
-			System.out.println("Octave quality " + (q-1) + ": " + quality[instrument][q]);
+			System.out.println("Instrument: " + (instrument) + ", q: " + q);
+			if (instrument < 0) octaves[q] = "What just happened?";
+			else {
+				octaves[q] = (q-1) + " (quality: " + (quality[instrument][q]) + "%)";
+				System.out.println("Octave quality " + (q-1) + ": " + quality[instrument][q]);
+			}
 		} 
 		return octaves;
 	}
@@ -232,6 +248,7 @@ public class MidiParser {
 	private void estimateOctaveQuality(int instrument){
 		if(sheets[instrument][0].equals("")) return;
 		System.out.println("Processing quality of instrument " + instrument);
+				
 		boolean ignorePrint = true;
 		for(int q = 0; q < 11; q++){
 			if(quality[instrument][q] != 0) ignorePrint = false;
@@ -249,9 +266,61 @@ public class MidiParser {
 		//System.out.println("Highest quality is octave " + (getHighestQualityOctave()-1) + " (index=" + getHighestQualityOctave() + ")");
 	}
 
+	private void checkIfChannelIsIndexed(int instrument) {
+		if(instruments[instrument] != null) return;
+		
+		try {
+			Synthesizer syn;
+
+			syn = MidiSystem.getSynthesizer();
+			//System.out.print("Channel: " + sm.getChannel() + " ");
+
+
+
+			syn.open(); 
+			Instrument[] instr = syn.getDefaultSoundbank().getInstruments();
+
+			//System.out.println();
+
+			Pattern pattern = Pattern.compile("Instrument: (.*?)  +bank.*");
+			Matcher matcher = pattern.matcher(instr[instrument].toString());
+			
+			if(matcher.matches()){
+				if(instruments[instrument] == null) instruments[instrument] = (instrument + 1) + ". " + matcher.group(1);
+				else {
+					if(!instruments[instrument].contains(matcher.group(1))) {
+						instruments[instrument] += ", " + matcher.group(1);
+					}
+				}
+
+			}
+
+
+
+			//System.out.print(((ShortMessage) message).getData1());
+		} catch (MidiUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		if(true)return;
+		
+		System.out.println("Checking if instrument is indexed...");
+		if(shownInstruments.size() <= instrument || shownInstruments.get(instrument) == null) {
+			System.out.println("This instrument doesn't seem to be indexed. Setting it to default piano...");
+			shownInstruments.add((instrument+1) + ". " +"Acoustic Grand Piano");
+		} else {
+			System.out.println("This instrument appears to be properly indexed. All is good.");
+		}
+		
+		
+	}
+
 	public int getHighestQualityOctave(String shownInstrument){
 		int instrument = convertShownInstrument(shownInstrument);
 		int highest = 6; //Octave 5 is the default
+		System.out.println(quality.toString());
 		for(int q = 0; q < 11; q++){
 			if(quality[instrument][q] > quality[instrument][highest]) highest = q;
 		}
@@ -308,6 +377,7 @@ public class MidiParser {
 
 
 				MidiMessage message = event.getMessage();
+				
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
 					if (sm.getCommand() == ShortMessage.PROGRAM_CHANGE) {
@@ -327,6 +397,7 @@ public class MidiParser {
 
 							Pattern pattern = Pattern.compile("Instrument: (.*?)  +bank.*");
 							Matcher matcher = pattern.matcher(instr[sm.getData1()].toString());
+							
 							if(matcher.matches()){
 								if(instruments[sm.getChannel()] == null) instruments[sm.getChannel()] = (sm.getChannel() + 1) + ". " + matcher.group(1);
 								else {
@@ -354,10 +425,16 @@ public class MidiParser {
 		
 		for(String instrument : instruments) {
 			System.out.println("PROCESSING INSTRUMENT: '" + instrument + "'");
+
 			if(instrument != null) {
 				shownInstruments.add(instrument);
+				allNull = false;
 			}
 		}
+		
+	}
+	
+	public void refreshInstruments() {
 		
 	}
 
