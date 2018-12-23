@@ -268,37 +268,18 @@ public class MidiParser {
 
 	private void checkIfChannelIsIndexed(int instrument) {
 		if(instruments[instrument] != null) return;
-		
+		System.out.println("Instrument in channel " + instrument + " does not appear to be indexed. Setting it to unspecified.");
 		try {
-			Synthesizer syn;
-
-			syn = MidiSystem.getSynthesizer();
-			//System.out.print("Channel: " + sm.getChannel() + " ");
-
-
-
-			syn.open(); 
-			Instrument[] instr = syn.getDefaultSoundbank().getInstruments();
-
-			//System.out.println();
-
-			Pattern pattern = Pattern.compile("Instrument: (.*?)  +bank.*");
-			Matcher matcher = pattern.matcher(instr[instrument].toString());
 			
-			if(matcher.matches()){
-				if(instruments[instrument] == null) instruments[instrument] = (instrument + 1) + ". " + matcher.group(1);
-				else {
-					if(!instruments[instrument].contains(matcher.group(1))) {
-						instruments[instrument] += ", " + matcher.group(1);
-					}
-				}
-
+			if(true){
+				if(instruments[instrument] == null) instruments[instrument] = (instrument + 1) + ". Unspecified";
+				
 			}
 
 
 
 			//System.out.print(((ShortMessage) message).getData1());
-		} catch (MidiUnavailableException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
