@@ -81,6 +81,10 @@ A: Because there are so many international keyboardlayouts, and this way they sh
 
 # FAQ
 
+#### Will this work with the mac version?
+
+That doesn't appear to be the case. Unfortunately, I don't have a mac for testing it out at the moment. 
+
 #### Why is there a number next to each instrument?
 
 The number reflects the midi channel index and is mostly intended for people making their own midi files for playback.
