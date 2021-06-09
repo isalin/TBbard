@@ -1,28 +1,14 @@
 package bard;
 
-import javafx.event.EventHandler;
-
 import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.TransferMode;
-
-import javax.imageio.ImageIO;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -33,16 +19,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Scanner;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -65,6 +45,7 @@ public class GUI {
 	 */
 	int stopPlayback = KeyEvent.VK_ESCAPE;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public GUI() {
 		JFrame frame = new JFrame();
 

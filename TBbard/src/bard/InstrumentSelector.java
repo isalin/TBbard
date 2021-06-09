@@ -1,16 +1,12 @@
 package bard;
 
 import javax.swing.JPanel;
-import javax.swing.BorderFactory;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -23,6 +19,7 @@ public class InstrumentSelector {
 	JComboBox<String> cmbInstrumentSelect;
 
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public InstrumentSelector(String[] instruments) {
 		
 		frame = new JDialog();

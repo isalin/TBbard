@@ -2,6 +2,20 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.base.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.controls.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.fxml.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.graphics.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.media.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.swing.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx.web.jar"/>
+	<classpathentry kind="lib" path="G:/libs/javafx-sdk-11.0.2/lib/javafx-swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

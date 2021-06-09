@@ -1,14 +1,12 @@
 package bard;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.sound.midi.Instrument;
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -17,8 +15,6 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
-
-import org.omg.CosNaming.IstringHelper;
 
 public class MidiParser {
 
