@@ -10,6 +10,7 @@ public class Notes {
 
 	static Robot r;
 	static int heldKey = -1;
+	static int heldStep = -1;
 	static int heldMod = -1;
 	String lastNote = "null";
 
@@ -48,27 +49,33 @@ public class Notes {
 	 * Array to hold the keys corresponding to each note
 	 * TODO Make this configurable by the user
 	 */
-	private int[] keys = {KeyEvent.VK_Q, 
-			KeyEvent.VK_2, 
-			KeyEvent.VK_W,
+	private int[] keys = {KeyEvent.VK_1, 
+			KeyEvent.VK_1, 
+			KeyEvent.VK_2,
 			KeyEvent.VK_3,
-			KeyEvent.VK_E,
-			KeyEvent.VK_R,
+			KeyEvent.VK_3,
+			KeyEvent.VK_4,
+			KeyEvent.VK_4,
 			KeyEvent.VK_5,
-			KeyEvent.VK_T,
+			KeyEvent.VK_5,
 			KeyEvent.VK_6,
-			KeyEvent.VK_Y,
 			KeyEvent.VK_7,
-			KeyEvent.VK_U,
-			KeyEvent.VK_I
+			KeyEvent.VK_7,
+			KeyEvent.VK_8
 	};
 
 	/**
 	 * Array to hold the keys corresponding to the modifiers for the different
 	 * TODO Make this configurable by the user
 	 */
-	private int[] octaveModifiers = {KeyEvent.VK_CONTROL,
-			KeyEvent.VK_SHIFT
+	private int[] octaveModifiers = {
+			KeyEvent.VK_RIGHT,
+			KeyEvent.VK_LEFT
+	};
+	
+	private int[] stepModifiers = {
+			KeyEvent.VK_UP,
+			KeyEvent.VK_DOWN
 	};
 
 
@@ -87,6 +94,15 @@ public class Notes {
 
 		if(running == false) return;
 		
+		if(note.contains("b")) {
+			r.keyPress(stepModifiers[0]);
+			heldStep = stepModifiers[0];
+		}
+		if(note.contains("#")) {
+			r.keyPress(stepModifiers[1]);
+			heldStep = stepModifiers[1];
+		}
+		
 		note = note.toLowerCase();
 		if(nextNote != null) nextNote = nextNote.toLowerCase();
 		
@@ -94,6 +110,8 @@ public class Notes {
 		System.out.println("NextNote: " + nextNote);
 		System.out.println("LastNote: " + lastNote);
 
+
+		
 		
 		boolean hold = false;
 
@@ -165,6 +183,7 @@ public class Notes {
 		if(matcher.matches()){
 			note = matcher.group(1) + "(" + matcher.group(2) + ")";
 			lastNote = note;
+			
 		}
 
 		System.out.println("Playing: " + note);
@@ -187,6 +206,10 @@ public class Notes {
 
 
 
+		if(heldStep != -1) {
+			r.keyRelease(heldStep);
+			heldStep = -1;
+		}
 
 	}
 
@@ -200,6 +223,7 @@ public class Notes {
 			//			releaseHeldKey();
 			return;
 		}
+		
 
 		/* Doing a modulo operation on the index with 3 (Because there are 3 notes, one for each octave in the note table)
 		 * With this we can get the index of the octave variation of the note the index points to */
@@ -274,6 +298,10 @@ public class Notes {
 		}
 		if(heldMod != -1){
 			r.keyRelease(heldMod);
+			heldMod = -1;
+		}
+		if(heldStep != -1){
+			r.keyRelease(heldStep);
 			heldMod = -1;
 		}
 		//r.delay(1);
