@@ -643,16 +643,14 @@ public class GUI {
 									taText.requestFocusInWindow();
 									//taText.requestFocus();
 									taText.select(charsProcessed, charsProcessed + noteLength);
-									String nextNote = null;
-									if(i+1 < splitLines.length) nextNote = splitLines[i+1];
-									n.play(splitLines[i], nextNote);
+									n.play(splitLines[i], getNextNote(splitLines, i));
 									charsProcessed += noteLength;
 								}
 								Thread.sleep(1000); //This lets the game's music buffer catch up if the looping song has a very high tempo
 
 							}while(loopCheckBox.isSelected() && n.running);
 							btPlayButton.setText("Play");
-							n.releaseHeldKey();
+							Notes.releaseHeldKey(true);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -711,6 +709,17 @@ public class GUI {
 			fileLoaded = true;
 			frame.setTitle("TBbard - " + fileName);
 		}
+	}
+
+	private String getNextNote(String[] splitLines, int currentIndex) {
+		if(currentIndex >= splitLines.length) return null;
+		for(int i = currentIndex+1; i < splitLines.length; i++) {
+			if(splitLines[i].startsWith("w") || splitLines[i].toLowerCase().matches("r") || splitLines[i].toLowerCase().matches("release")){
+				continue;
+			}
+			return splitLines[i];
+		}
+		return null;
 	}
 
 }

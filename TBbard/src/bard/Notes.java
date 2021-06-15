@@ -28,18 +28,21 @@ public class Notes {
 	boolean fullKeyboard = false;
 	Keyboard kbrd = new Keyboard();
 
-	int fps = 0;
+	boolean octaveSleep = false;
+	boolean lastNoteSteppedOutOfOctave = false;
 
-	private String[] notes = {"C(-1)", "C", "C(+1)", 
-			"C#(-1)", "C#", "C#(+1)", 
-			"D(-1)", "D", "D(+1)", 
+	static int fps = 0;
+
+	private String[] notes = {"C(-1)", "C", "C(+1)",
+			"C#(-1)", "C#", "C#(+1)",
+			"D(-1)", "D", "D(+1)",
 			"Eb(-1)", "Eb", "Eb(+1)",
 			"E(-1)", "E", "E(+1)",
-			"F(-1)", "F", "F(+1)", 
+			"F(-1)", "F", "F(+1)",
 			"F#(-1)", "F#", "F#(+1)",
-			"G(-1)", "G", "G(+1)", 
+			"G(-1)", "G", "G(+1)",
 			"G#(-1)", "G#", "G#(+1)",
-			"A(-1)", "A", "A(+1)", 
+			"A(-1)", "A", "A(+1)",
 			"Bb(-1)", "Bb", "Bb(+1)",
 			"B(-1)", "B", "B(+1)",
 			"C(+2)"
@@ -49,8 +52,8 @@ public class Notes {
 	 * Array to hold the keys corresponding to each note
 	 * TODO Make this configurable by the user
 	 */
-	private int[] keys = {KeyEvent.VK_1, 
-			KeyEvent.VK_1, 
+	private static int[] keys = {KeyEvent.VK_1,
+			KeyEvent.VK_1,
 			KeyEvent.VK_2,
 			KeyEvent.VK_3,
 			KeyEvent.VK_3,
@@ -68,12 +71,12 @@ public class Notes {
 	 * Array to hold the keys corresponding to the modifiers for the different
 	 * TODO Make this configurable by the user
 	 */
-	private int[] octaveModifiers = {
+	private static int[] octaveModifiers = {
 			KeyEvent.VK_RIGHT,
 			KeyEvent.VK_LEFT
 	};
-	
-	private int[] stepModifiers = {
+
+	private static int[] stepModifiers = {
 			KeyEvent.VK_UP,
 			KeyEvent.VK_DOWN
 	};
@@ -93,32 +96,47 @@ public class Notes {
 
 
 		if(running == false) return;
-		
-		if(note.contains("b")) {
-			r.keyPress(stepModifiers[0]);
-			heldStep = stepModifiers[0];
+
+		trackKey(note);
+
+		octaveSleep = false;
+
+		if(((note.contains("b") && heldStep != stepModifiers[0]) ||
+				(note.contains("#") && heldStep != stepModifiers[1])
+				|| (!note.contains("b") && !note.contains("#") && heldStep != -1)
+				)) {
+			System.out.println("Clearing step");
+			clearStep();
+			if(note.contains("b")) {
+				r.keyPress(stepModifiers[0]);
+				heldStep = stepModifiers[0];
+			}
+			if(note.contains("#")) {
+				r.keyPress(stepModifiers[1]);
+				heldStep = stepModifiers[1];
+			}
+			octaveSleep = true;
 		}
-		if(note.contains("#")) {
-			r.keyPress(stepModifiers[1]);
-			heldStep = stepModifiers[1];
-		}
-		
+
+
+
+
 		note = note.toLowerCase();
 		if(nextNote != null) nextNote = nextNote.toLowerCase();
-		
+
 		System.out.println("\n--- " + note + " ---");
 		System.out.println("NextNote: " + nextNote);
 		System.out.println("LastNote: " + lastNote);
 
 
-		
-		
+
+
 		boolean hold = false;
 
 		Pattern pattern = Pattern.compile("(r|release)");
 		Matcher matcher = pattern.matcher(note.toLowerCase());
 		if(matcher.matches()){
-			pressButton(-1, hold);
+			pressButton(-1, hold, nextNote);
 			System.out.println("\nReleasing key.\n");
 			return;
 		}
@@ -133,7 +151,7 @@ public class Notes {
 //				System.out.println("Playback faster than framerate. Increasing wait.");
 //				waitTime = slowdownConstant;
 //			}
-			
+
 			boolean nextNoteIsSame = false;
 			if(nextNote != null && lastNote.equals(nextNote)){
 				System.out.println("The next note is the same as the held note. Adjusting wait time by " + slowdownConstant*2 + " ms (your fps delay), and releasing held key.");
@@ -146,9 +164,10 @@ public class Notes {
 				if(waitTime < 0){
 					System.out.println("WaitTime is less than 0. Ignoring...");
 				} else {
+					if(waitTime > 0 && waitTime < 1000/fps) waitTime = 1000/fps;
 					Thread.sleep((long) (waitTime));
 					if(nextNoteIsSame){
-						releaseHeldKey();
+						releaseHeldKey(false);
 						Thread.sleep((long) (slowdownConstant*2));
 					}
 				}
@@ -170,7 +189,7 @@ public class Notes {
 			}
 			lastNote = note;
 			note = matcher.group(2);
-			
+
 		} else {
 			if(holdNotes){
 				System.out.println("Don't hold note.");
@@ -183,7 +202,7 @@ public class Notes {
 		if(matcher.matches()){
 			note = matcher.group(1) + "(" + matcher.group(2) + ")";
 			lastNote = note;
-			
+
 		}
 
 		System.out.println("Playing: " + note);
@@ -191,77 +210,136 @@ public class Notes {
 		int index = 0;
 
 		if(fullKeyboard){
-			releaseHeldKey();
+			releaseHeldKey(false);
 			press(kbrd.getKey(note), hold);
 		} else {
 			for(String s : notes){
 				if(s.toLowerCase().equals(note)){
 
-					pressButton(index, hold);
+					pressButton(index, hold, nextNote);
 					break;
 				}
 				index++;
 			}
 		}
+	}
 
 
+	int currentlyHeldKeys = 0;
+	private void trackKey(String note) {
+		if(note.startsWith("w") && !note.equals("w0")){
+			currentlyHeldKeys = 0;
+		} else {
+			currentlyHeldKeys++;
+		}
+	}
 
+	private void clearStep() {
 		if(heldStep != -1) {
 			r.keyRelease(heldStep);
 			heldStep = -1;
 		}
-
 	}
 
-	private void pressButton(int i, boolean hold) {
+	private void pressButton(int i, boolean hold, String nextNote) {
 
 
 		//checkWaitTime();
-		releaseHeldKey();
+		releaseHeldKey(false);
 		System.out.println("Pressing index: " + i);
 		if(i == -1){
 			//			releaseHeldKey();
 			return;
 		}
-		
+
 
 		/* Doing a modulo operation on the index with 3 (Because there are 3 notes, one for each octave in the note table)
 		 * With this we can get the index of the octave variation of the note the index points to */
 		switch(i % 3) {
 		case 0:
+			if(heldMod == this.octaveModifiers[0]) break;
+			if(heldMod == this.octaveModifiers[1]) {
+				r.keyRelease(this.octaveModifiers[1]);
+				try {
+					Thread.sleep((long) (1000/fps));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			r.keyPress(this.octaveModifiers[0]);
-			if(hold) heldMod = this.octaveModifiers[0];
+			heldMod = this.octaveModifiers[0];
 			System.out.println("Going down");
+			octaveSleep = true;
 			break;
 		case 2:
+			if(heldMod == this.octaveModifiers[1]) break;
+			if(heldMod == this.octaveModifiers[0]) {
+				r.keyRelease(this.octaveModifiers[0]);
+				try {
+					Thread.sleep((long) (1000/fps));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			r.keyPress(this.octaveModifiers[1]);
-			if(hold) heldMod = this.octaveModifiers[1];
+			heldMod = this.octaveModifiers[1];
 			System.out.println("Going Up");
+			octaveSleep = true;
 			break;
 		}
+		//r.waitForIdle();
+
+
+		if(octaveSleep == true || (lastNoteSteppedOutOfOctave == true && System.currentTimeMillis() - lastTimestamp < 1000/fps)) {
+			try {
+				Thread.sleep((long) (1000/fps));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(lastNoteSteppedOutOfOctave) lastNoteSteppedOutOfOctave = false;
+		} else {
+			if(lastNoteSteppedOutOfOctave == true) lastNoteSteppedOutOfOctave = false;
+		}
+
 
 		/* Doing integer division with 3 (Because there are 3 notes, one for each octave in the note table we got the index from)
 		 * With this we can get the index of the note of that pseudo-row the index points to */
 		press(i / 3, hold);
-
-		try {
-			Thread.sleep((long) Math.ceil((double) 1000/fps));
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//r.waitForIdle();
 
 		/* Likewise as the first switch statement here */
+		System.out.println("Octave check says next note is: " + nextNote);
 		if(!hold){
 			switch(i % 3) {
 			case 0:
-				r.keyRelease(this.octaveModifiers[0]);
-				System.out.println("Releasing Down");
+				if(nextNote == null || !nextNote.contains("-1")) {
+					r.keyRelease(this.octaveModifiers[0]);
+					System.out.println("Releasing Down");
+					lastNoteSteppedOutOfOctave = true;
+					heldMod = -1;
+				}
 				break;
 			case 2:
-				r.keyRelease(this.octaveModifiers[1]);
-				System.out.println("Releasing Up");
+					if(nextNote == null || !nextNote.contains("+1")) {
+						r.keyRelease(this.octaveModifiers[1]);
+						System.out.println("Releasing Up");
+						lastNoteSteppedOutOfOctave = true;
+						heldMod = -1;
+					}
 				break;
+			}
+			//r.waitForIdle();
+		}
+		if(lastNoteSteppedOutOfOctave == true) {
+			lastNoteSteppedOutOfOctave = false;
+			try {
+				Thread.sleep((long) (1000/fps));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -288,24 +366,41 @@ public class Notes {
 		}
 
 		lastTimestamp = System.currentTimeMillis();
+		r.waitForIdle();
 	}
 
-	public static void releaseHeldKey(){
+	public static void releaseHeldKey(boolean all){
 		System.out.println("Releasing key:" + heldKey);
 		if(heldKey != -1){
 			r.keyRelease(heldKey);
 			heldKey = -1;
 		}
-		if(heldMod != -1){
+		if(all && heldMod != -1){
 			r.keyRelease(heldMod);
 			heldMod = -1;
+			try {
+				Thread.sleep((long) (1000/fps));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			r.waitForIdle();
 		}
-		if(heldStep != -1){
-			r.keyRelease(heldStep);
-			heldMod = -1;
+
+		if(all){
+			for(int i : octaveModifiers){
+				r.keyRelease(i);
+			}
+			for(int i : stepModifiers){
+				r.keyRelease(i);
+			}
+			for(int i : keys){
+				r.keyRelease(i);
+			}
 		}
+
 		//r.delay(1);
-		r.waitForIdle();
+		//r.waitForIdle();
 	}
 
 	private void checkWaitTime(){

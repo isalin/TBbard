@@ -90,8 +90,14 @@ public class MidiParser {
 			for (int i=0; i < track.size(); i++) { 
 				MidiEvent event = track.get(i);
 
-
-				if(firstLineDone && (i+1 < track.size()) && (track.get(i+1).getMessage() instanceof ShortMessage)&& (track.get(i).getMessage() instanceof ShortMessage) && (track.get(i+1).getTick() - event.getTick()) < 2 && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && ((ShortMessage)track.get(i).getMessage()).getCommand() == NOTE_ON) continue;
+// Used to filter out notes that occur at the same timestamp
+//				if(firstLineDone && (i+1 < track.size()) && 
+//						(track.get(i+1).getMessage() instanceof ShortMessage) && 
+//						(track.get(i).getMessage() instanceof ShortMessage) && 
+//						(track.get(i+1).getTick() - event.getTick()) < 2 && 
+//						((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && 
+//						((ShortMessage)track.get(i).getMessage()).getCommand() == NOTE_ON) 
+//					continue;
 
 
 
@@ -154,9 +160,13 @@ public class MidiParser {
 
 						if (includeHoldRelease && (sm.getCommand() == NOTE_OFF || (sm.getData2() == 0))) {
 
-							if(i+1 <= track.size() && track.get(i+1).getMessage() instanceof ShortMessage && ((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && (track.get(i+1).getTick() - event.getTick()) < 2){
-								continue;
-							}
+							// Used to filter out notes that occur at the same timestamp
+//							if(i+1 <= track.size() && 
+//									track.get(i+1).getMessage() instanceof ShortMessage && 
+//									((ShortMessage)track.get(i+1).getMessage()).getCommand() == NOTE_ON && 
+//									(track.get(i+1).getTick() - event.getTick()) < 2){
+//								continue;
+//							}
 
 							int key = sm.getData1();
 							int octave = (key / 12)-1;
